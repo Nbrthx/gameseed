@@ -6,7 +6,7 @@ export class Player extends Phaser.GameObjects.Container{
     uid: string
     maxHealth: number
     health: number
-    speed = 4.2
+    speed = 3.8
 
     scene: Game
     sprite: Phaser.GameObjects.Sprite
