@@ -18,42 +18,6 @@ const maps: {
             requiredLevel: 0,
             isDestroyable: false
         }
-    },
-    {
-        id: 'map2',
-        config: {
-            mapId: 'map2',
-            isPvpAllowed: false,
-            requiredLevel: 0,
-            isDestroyable: false
-        }
-    },
-    {
-        id: 'map3',
-        config: {
-            mapId: 'map3',
-            isPvpAllowed: false,
-            requiredLevel: 3,
-            isDestroyable: false
-        }
-    },
-    {
-        id: 'map4',
-        config: {
-            mapId: 'map4',
-            isPvpAllowed: false,
-            requiredLevel: 0,
-            isDestroyable: false
-        }
-    },
-    {
-        id: 'map5',
-        config: {
-            mapId: 'map5',
-            isPvpAllowed: true,
-            requiredLevel: 4,
-            isDestroyable: false
-        }
     }
 ]
 

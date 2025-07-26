@@ -4,6 +4,8 @@ import { MapSetup } from '../components/MapSetup';
 import { createDebugGraphics } from '../components/PhysicsDebug';
 import { Player } from '../prefabs/Player';
 import { GameUI } from './GameUI';
+import { Socket } from 'socket.io-client';
+import { NetworkHandler } from '../components/NetworkHandler';
 
 export class Game extends Scene
 {
@@ -11,10 +13,14 @@ export class Game extends Scene
     world: p.World
     gameScale: number = 4
     UI: GameUI
+    socket: Socket
 
     debugGraphics: Phaser.GameObjects.Graphics
     mapSetup: MapSetup
+    networkHandler: NetworkHandler
+
     player: Player;
+    others: Player[] = []
 
     constructor () {
         super('Game');
@@ -31,12 +37,18 @@ export class Game extends Scene
 
         this.UI = (this.scene.get('GameUI') || this.scene.add('GameUI', new GameUI(), true)) as GameUI
 
-        this.player = new Player(this, 700, 800, 'player1', 'player1')
-        this.camera.startFollow(this.player, true, 0.1, 0.1)
+        this.socket = this.UI.socket
 
+        const enterPos = this.mapSetup.enterpoint.get('spawn') || { x: 100, y: 100 }
+        this.player = new Player(this, enterPos.x, enterPos.y, this.socket.id as string, this.registry.get('username') || 'null')
+        // scene.spatialAudio.addListenerBody(scene.player.pBody)
+        this.player.nameText.setColor('#66ffcc')
+        this.camera.startFollow(this.player, true, 0.1, 0.1)
 
         this.lights.enable()
         this.lights.setAmbientColor(0xeeffcc)
+
+        this.networkHandler = new NetworkHandler(this)
     }
 
     update(){

@@ -6,6 +6,7 @@ export interface Range{
     texture: string
     projectileTexture: string
     offsetMultipler: number
+    spriteOffsetMultipler: number
     speed: number
     range: number
     hitboxSize: {

@@ -18,7 +18,116 @@ interface RangeItem {
 
 type Item = MeleeItem | RangeItem
 
-export const itemList: Item[] = []
+export const itemList: Item[] = [
+    {
+        "id": "punch",
+        "type": "melee",
+        "config": {
+            "texture": "punch",
+            "offsetMultipler": 1,
+            "hitboxSize": {
+                "width": 0.7,
+                "height": 0.2
+            },
+            "hitboxOffsetMultipler": 1.1,
+            "cooldown": 500,
+            "attackDelay": 100,
+            "damage": 2,
+            "knockback": 15,
+            "force": 6,
+            "forceDelay": 0,
+            "canMove": true
+        }
+    },
+    {
+        "id": "sword",
+        "type": "melee",
+        "config": {
+            "texture": "sword",
+            "offsetMultipler": 0.5,
+            "hitboxSize": {
+                "width": 0.8,
+                "height": 0.7
+            },
+            "hitboxOffsetMultipler": 0.9,
+            "cooldown": 800,
+            "attackDelay": 200,
+            "damage": 4.5,
+            "knockback": 18,
+            "force": 10,
+            "forceDelay": 0,
+            "canMove": true
+        }
+    },
+    {
+        "id": "bow",
+        "type": "range",
+        "config": {
+            "texture": "bow",
+            "projectileTexture": "arrow",
+            "spriteOffsetMultipler": 0.8,
+            "offsetMultipler": 0.8,
+            "hitboxSize": {
+                "width": 0.4,
+                "height": 0.1
+            },
+            "speed": 30,
+            "range": 6,
+            "cooldown": 1400,
+            "attackDelay": 200,
+            "damage": 5,
+            "knockback": 20,
+            "force": -8,
+            "forceDelay": 100,
+            "canMove": false,
+            "isPenetrating": false
+        }
+    },
+    {
+        "id": "dagger",
+        "type": "melee",
+        "config": {
+            "texture": "dagger",
+            "offsetMultipler": 0.2,
+            "hitboxSize": {
+                "width": 1.4,
+                "height": 0.4
+            },
+            "hitboxOffsetMultipler": 0.4,
+            "cooldown": 3000,
+            "attackDelay": 300,
+            "damage": 8,
+            "knockback": 8,
+            "force": 24,
+            "forceDelay": 200,
+            "canMove": false
+        }
+    },
+    {
+        "id": "blue-knife",
+        "type": "range",
+        "config": {
+            "texture": "throw",
+            "projectileTexture": "blue-knife",
+            "spriteOffsetMultipler": 0.9,
+            "offsetMultipler": 0.7,
+            "hitboxSize": {
+                "width": 0.2,
+                "height": 0.1
+            },
+            "speed": 10,
+            "range": 8,
+            "cooldown": 400,
+            "attackDelay": 300,
+            "damage": 1.6,
+            "knockback": 10,
+            "force": -12,
+            "forceDelay": 200,
+            "canMove": true,
+            "isPenetrating": true
+        }
+    }
+]
 
 export type BaseItemConfig = Melee | Range;
 

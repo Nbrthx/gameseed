@@ -3,7 +3,7 @@ import * as p from 'planck'
 import { Account } from '../server'
 import { BaseItem } from './BaseItem'
 import { ItemInstance } from './ItemInstance'
-import { MeleeWeapon } from './items/MeleeWeapon'
+// import { MeleeWeapon } from './items/MeleeWeapon'
 import { Quest } from '../components/Quests'
 
 export class Player{

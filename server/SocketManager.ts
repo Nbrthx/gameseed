@@ -1,38 +1,38 @@
 import { Server, Socket } from 'socket.io';
-import { GameManager, InputData } from './GameManager';
+import { GameManager } from './GameManager';
 import { Server as HTTPServer } from 'http'
-import { Account, Item } from './server';
+import { Account } from './server';
 // import { QuestConfig, Quests } from './components/Quests';
 
-interface OutfitList {
-    male: {
-        hair: string[],
-        face: string[],
-        body: string[],
-        leg: string[]
-    },
-    female: {
-        hair: string[],
-        face: string[],
-        body: string[],
-        leg: string[]
-    }
-}
+// interface OutfitList {
+//     male: {
+//         hair: string[],
+//         face: string[],
+//         body: string[],
+//         leg: string[]
+//     },
+//     female: {
+//         hair: string[],
+//         face: string[],
+//         body: string[],
+//         leg: string[]
+//     }
+// }
 
-const outfitList: OutfitList = {
-    male: {
-        hair: [],
-        face: [],
-        body: [],
-        leg: []
-    },
-    female: {
-        hair: [],
-        face: [],
-        body: [],
-        leg: []
-    }
-}
+// const outfitList: OutfitList = {
+//     male: {
+//         hair: [],
+//         face: [],
+//         body: [],
+//         leg: []
+//     },
+//     female: {
+//         hair: [],
+//         face: [],
+//         body: [],
+//         leg: []
+//     }
+// }
 
 export class SocketManager {
 
@@ -52,6 +52,7 @@ export class SocketManager {
 
     private setupSocketListeners(socket: Socket): void {
 
+        socket.on('joinGame', this.joinGame.bind(this, socket));
 
         socket.on('ping', (callback) => {
             callback()
@@ -65,8 +66,46 @@ export class SocketManager {
             //     this.gameManager.tradeSession.splice(this.gameManager.tradeSession.indexOf(tradeSession), 1)
             // }
 
-            // this.gameManager.getPlayerWorld(socket.id)?.removePlayer(socket.id);
-            // this.removeAuthedId(socket.id)
+            this.gameManager.getPlayerWorld(socket.id)?.removePlayer(socket.id);
+            this.removeAuthedId(socket.id)
         });
+    }
+
+    joinGame(socket: Socket){
+        const account = this.getAccountData(socket.id)
+        if(!account) return
+
+        const world = this.gameManager.getWorld('map1')
+        world?.addPlayer(socket.id, account);
+    }
+
+    // Not Listener
+
+    getPlayer(id: string){
+        return this.gameManager.getPlayerWorld(id)?.players.find(v => v.uid == id)
+    }
+
+    getIdByUsername(username: string){
+        let id: string | null = null
+        this.authedId.forEach((v, k) => {
+            if(v == username){
+                id = k
+                return
+            }
+        })
+        return id
+    }
+
+    getAccountData(id: string){
+        if(!this.authedId.has(id)) return null
+
+        const username = this.authedId.get(id) as string
+
+        return this.accounts.find(v => v.username == username)
+    }
+
+    removeAuthedId(id: string){
+        if(!this.authedId.has(id)) return
+        this.authedId.delete(id)
     }
 }

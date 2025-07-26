@@ -43,6 +43,9 @@ export class Preloader extends Scene
         this.load.spritesheet('male', 'char/male.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('male', 'char/male.png', { frameWidth: 64, frameHeight: 64 });
 
+        // HTML
+        this.load.html('inputname', 'html/inputname.html');
+
     }
 
     create ()

@@ -4,7 +4,7 @@ import * as cors from 'cors'
 import * as bodyParser from 'body-parser'
 
 import { SocketManager } from './SocketManager'
-// import { RestApi } from './RestApi'
+import { RestApi } from './RestApi'
 
 export interface Item {
     id: string
@@ -22,7 +22,7 @@ export interface Account{
         body: string
         leg: string
     }
-    inventory: Item[]
+    classList: string[]
     questCompleted: string[]
     questInProgress?: [string, number[]]
 }
@@ -44,7 +44,7 @@ const accounts: Account[] = []
 
 const authedId: Map<string, string> = new Map() // socket.id | username
 
-// new RestApi(app, accounts, authedId)
+new RestApi(app, accounts, authedId)
 
 new SocketManager(httpServer, accounts, authedId)
 

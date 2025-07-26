@@ -1,7 +1,13 @@
 import { Scene } from "phaser";
+import { Socket } from "socket.io-client";
+
+export const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}
 
 export class GameUI extends Scene{
 
+    socket: Socket
     keyboardInput: {
         up?: boolean
         down?: boolean
@@ -14,6 +20,8 @@ export class GameUI extends Scene{
     }
 
     create(){
+        this.socket = this.registry.get('socket')
+
         this.keyboardInput = {}
     }
 

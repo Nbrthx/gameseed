@@ -262,7 +262,6 @@ export class Game{
         socket?.broadcast.to(this.id).emit('playerJoined', {
             uid: socket.id,
             username: account.username,
-            items: account.inventory,
             from: from || 'spawn',
             health: account.health,
             outfit: account.outfit
