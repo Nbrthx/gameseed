@@ -5,12 +5,13 @@ import { createDebugGraphics } from '../components/PhysicsDebug';
 import { Player } from '../prefabs/Player';
 import { GameUI } from './GameUI';
 import { Socket } from 'socket.io-client';
-import { NetworkHandler } from '../components/NetworkHandler';
+import { GameState, NetworkHandler, OutputData } from '../components/NetworkHandler';
 
 export class Game extends Scene
 {
     camera: Phaser.Cameras.Scene2D.Camera;
     world: p.World
+    worldId: string = 'map1'
     gameScale: number = 4
     UI: GameUI
     socket: Socket
@@ -20,7 +21,9 @@ export class Game extends Scene
     networkHandler: NetworkHandler
 
     player: Player;
+    attackDir: p.Vec2 = new p.Vec2()
     others: Player[] = []
+    realBodyPos: Map<p.Body, { x: number, y: number }> = new Map()
 
     constructor () {
         super('Game');
@@ -56,6 +59,8 @@ export class Game extends Scene
 
         this.handleInput()
 
+        this.handleOutput()
+
         createDebugGraphics(this, this.debugGraphics)
     }
 
@@ -80,6 +85,78 @@ export class Game extends Scene
         vel.mul(this.player.speed);
         this.player.pBody.setLinearVelocity(vel)
 
+        if(vel.length() > 0 || this.attackDir.length() > 0){
+            this.socket.emit('playerInput', {
+                dir: { x: vel.x, y: vel.y },
+                attackDir: { x: this.attackDir.x, y: this.attackDir.y }
+            })
+            this.attackDir = new p.Vec2()
+        }
+
         this.player.update()
+    }
+
+    handleOutput(){
+        const pendingUpdates = this.networkHandler.pendingOutput.splice(0); // Ambil semua data dan kosongkan antrian
+
+        if (pendingUpdates.length > 0) {
+            const latestPlayers = new Map<string, OutputData & { xp: number, isPvpProtected: boolean }>();
+            const latestEnemies = new Map<string, OutputData & { id: string }>();
+            
+            let finalDroppedItems: GameState['droppedItems'] = [];
+            let finalProjectiles: GameState['projectiles'] = [];
+
+            pendingUpdates.forEach(gameState => {
+                if(gameState.id != this.worldId) return
+
+                gameState.players.forEach(playerData => {
+                    const existingPlayer = latestPlayers.get(playerData.uid);
+                    if (existingPlayer) {
+                        if(playerData.attackDir.x != 0 || playerData.attackDir.y != 0){
+                            existingPlayer.attackDir = playerData.attackDir;
+                        }
+                        existingPlayer.timestamp = playerData.timestamp
+                        existingPlayer.pos = playerData.pos;
+                        existingPlayer.health = playerData.health;
+                        existingPlayer.xp = playerData.xp;
+                        existingPlayer.isPvpProtected = playerData.isPvpProtected
+                    } else {
+                        latestPlayers.set(playerData.uid, playerData);
+                    }
+                });
+
+                gameState.enemies.forEach(enemyData => {
+                    const existingEnemy = latestEnemies.get(enemyData.uid);
+                    if (existingEnemy) {
+                        if(enemyData.attackDir.x != 0 || enemyData.attackDir.y != 0){
+                            existingEnemy.attackDir = enemyData.attackDir;
+                        }
+                        existingEnemy.timestamp = enemyData.timestamp
+                        existingEnemy.pos = enemyData.pos;
+                        existingEnemy.health = enemyData.health;
+                    } else {
+                        latestEnemies.set(enemyData.uid, enemyData);
+                    }
+                });
+
+                // Ambil daftar droppedItems dan projectiles dari GameState saat ini (yang terakhir akan digunakan)
+                finalDroppedItems = gameState.droppedItems;
+                finalProjectiles = gameState.projectiles;
+            });
+
+            const mergedGameState: GameState = {
+                id: this.worldId,
+                players: Array.from(latestPlayers.values()),
+                enemies: Array.from(latestEnemies.values()),
+                droppedItems: finalDroppedItems,
+                projectiles: finalProjectiles,
+            };
+
+            this.networkHandler.update(mergedGameState); // Panggil update sekali dengan data yang sudah digabung
+        }
+
+        this.others.forEach(other => {
+            other.update()
+        })
     }
 }

@@ -1,3 +1,4 @@
+import p from 'planck'
 import { Socket } from "socket.io-client"
 import { Game } from "../scenes/Game"
 import { isMobile } from "../scenes/GameUI"
@@ -69,6 +70,8 @@ export class NetworkHandler{
         this.socket.on('playerJoined', this.playerJoined.bind(this))
 
         this.socket.on('playerLeft', this.playerLeft.bind(this))
+
+        this.socket.on('output', this.output.bind(this))
     }
 
     joinGame(account: Account, others: {
@@ -138,5 +141,181 @@ export class NetworkHandler{
 
         scene.others.splice(scene.others.indexOf(existPlayer), 1)
         existPlayer.destroy()
+    }
+
+    output(data: GameState){
+        if(data.id != this.scene.worldId) return
+
+        this.pendingOutput.push(data)
+    }
+
+    update(data: GameState){
+        const scene = this.scene
+
+        const players = data.players
+
+        players.forEach(playerData => {
+            const other = scene.others.find(v => v.uid == playerData.uid)
+
+            if(playerData.uid == scene.player.uid){
+                const targetPosition = new p.Vec2(playerData.pos.x, playerData.pos.y)
+                const currentPosition = scene.player.pBody.getPosition()
+
+                const normalized = targetPosition.clone().sub(currentPosition).add(new p.Vec2())
+
+                if(normalized.length() > 0.08 && scene.player.pBody.getLinearVelocity().length() < 0.08) scene.player.pBody.setLinearVelocity(normalized)
+
+                scene.player.pBody.setPosition(currentPosition.add(targetPosition.sub(currentPosition).mul(0.2)))
+                scene.player.attackDir = new p.Vec2(playerData.attackDir.x, playerData.attackDir.y)
+                scene.player.isPvpProtected = playerData.isPvpProtected
+
+                scene.realBodyPos.set(scene.player.pBody, playerData.pos)
+
+                if(scene.player.health != playerData.health){
+                    if(scene.player.health > playerData.health){
+                        scene.camera.shake(100, 0.008)
+                        scene.player.hitEffect()
+                        // scene.tweens.add({
+                        //     targets: scene.UI.redEffect,
+                        //     alpha: 0.2,
+                        //     duration: 100,
+                        //     yoyo: true,
+                        //     ease: 'Sine.easeInOut',
+                        //     onComplete: () => scene.UI.redEffect.setAlpha(0)
+                        // })
+                    }
+                    scene.player.health = playerData.health
+                }
+                if(scene.player.health <= 0){
+                    this.destroy()
+                    scene.scene.start('GameOver')
+                }
+            }
+            else if(other){
+                const targetPosition = new p.Vec2(playerData.pos.x, playerData.pos.y)
+                const currentPosition = other.pBody.getPosition()
+
+                const normalized = targetPosition.clone().sub(currentPosition).add(new p.Vec2())
+
+                if(normalized.length() > 0.08) other.pBody.setLinearVelocity(normalized)
+                else other.pBody.setLinearVelocity(new p.Vec2(0, 0))
+            
+                scene.realBodyPos.set(other.pBody, playerData.pos)
+            
+                normalized.normalize()
+
+                other.pBody.setPosition(currentPosition.add(targetPosition.sub(currentPosition).mul(0.2)))
+                other.attackDir = new p.Vec2(playerData.attackDir.x, playerData.attackDir.y)
+                other.isPvpProtected = playerData.isPvpProtected
+                
+                if(other.health != playerData.health){
+                    if(other.health > playerData.health){
+                        other.hitEffect()
+                    }
+                    other.health = playerData.health
+                }
+                if(other.health <= 0){
+                    scene.others.splice(scene.others.indexOf(other), 1)
+                    other.destroy()
+                    this.scene.add.particles(other.x, other.y, 'red-circle-particle', {
+                        color: [0xcc9999],
+                        lifespan: 500,
+                        speed: { min: 200, max: 300 },
+                        scale: { start: 4, end: 0 },
+                        gravityY: 500,
+                        emitting: false
+                    }).explode(8)
+                }
+            }
+        })
+
+        // data.enemies.forEach(enemyData => {
+        //     const enemy = scene.enemies.find(v => v.uid == enemyData.uid)
+        //     if(enemy){
+        //         const targetPosition = new p.Vec2(enemyData.pos.x, enemyData.pos.y)
+        //         const currentPosition = enemy.pBody.getPosition()
+
+        //         const normalized = targetPosition.clone().sub(currentPosition).add(new p.Vec2())
+
+        //         if(normalized.length() > 0.08) enemy.pBody.setLinearVelocity(normalized)
+        //         else enemy.pBody.setLinearVelocity(new p.Vec2(0, 0))
+            
+        //         scene.realBodyPos.set(enemy.pBody, enemyData.pos)
+            
+        //         normalized.normalize()
+
+        //         enemy.pBody.setPosition(currentPosition.add(targetPosition.sub(currentPosition).mul(0.2)))
+        //         enemy.attackDir = new p.Vec2(enemyData.attackDir.x, enemyData.attackDir.y)
+                
+        //         if(enemy.health != enemyData.health){
+        //             if(enemy.health > enemyData.health){
+        //                 enemy.hitEffect()
+        //             }
+        //             enemy.health = enemyData.health
+        //         }
+        //         if(enemy.health <= 0){
+        //             scene.enemies.splice(scene.enemies.indexOf(enemy), 1)
+        //             enemy.destroy()
+        //             this.scene.add.particles(enemy.x, enemy.y, 'red-circle-particle', {
+        //                 color: [0xcc9999],
+        //                 lifespan: 500,
+        //                 speed: { min: 200, max: 300 },
+        //                 scale: { start: 4, end: 0 },
+        //                 gravityY: 500,
+        //                 emitting: false
+        //             }).explode(8)
+        //         }
+        //     }
+
+
+        //     if(!enemy){
+        //         const newEnemy = new Enemy(scene, enemyData.pos.x*scene.gameScale*32, enemyData.pos.y*scene.gameScale*32, enemyData.id, enemyData.uid)
+        //         newEnemy.health = enemyData.health
+        //         newEnemy.barUpdate(newEnemy.damageBar)
+        //         this.scene.enemies.push(newEnemy)
+        //     }
+        // })
+
+        // data.projectiles.forEach(projectileData => {
+        //     const existProjectile = scene.projectiles.find(v => v.uid == projectileData.uid)
+
+        //     const pos = new p.Vec2(projectileData.pos.x, projectileData.pos.y)
+        //     const dir = new p.Vec2(projectileData.dir.x, projectileData.dir.y)
+
+        //     if(!existProjectile){
+        //         const projectile = new Projectile(this.scene, pos, dir, projectileData.config, projectileData.uid)
+        //         this.scene.projectiles.push(projectile)
+        //     }
+        //     else{
+        //         existProjectile.pBody.setPosition(pos)
+        //         existProjectile.update()
+        //     }
+        // })
+
+        // scene.projectiles.sort(a => a.active ? 1 : -1)
+        // scene.projectiles.slice().reverse().forEach((projectile) => {
+        //     const projectileData = data.projectiles.find(v => v.uid == projectile.uid)
+        //     if(!projectileData){
+        //         scene.projectiles.splice(scene.projectiles.indexOf(projectile), 1)
+        //         projectile.destroy()
+
+        //         const x = Math.cos(projectile.pBody.getAngle())*projectile.config.hitboxSize.width*32*4
+        //         const y = Math.sin(projectile.pBody.getAngle())*projectile.config.hitboxSize.height*32*4
+
+        //         this.scene.add.particles(projectile.x+x, projectile.y+y, 'explode', {
+        //             speedX: {min: -100, max: 100},
+        //             speedY: {min: -100, max: 100},
+        //             scale: {start: 4, end: 4},
+        //             alpha: {start: 1, end: 0},
+        //             anim: 'explode',
+        //             lifespan: 160
+        //         }).explode(1)
+        //     }
+        // })
+        
+    }
+
+    destroy(){
+        this.socket.removeAllListeners()
     }
 }

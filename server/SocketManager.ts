@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { GameManager } from './GameManager';
+import { GameManager, InputData } from './GameManager';
 import { Server as HTTPServer } from 'http'
 import { Account } from './server';
 // import { QuestConfig, Quests } from './components/Quests';
@@ -54,6 +54,8 @@ export class SocketManager {
 
         socket.on('joinGame', this.joinGame.bind(this, socket));
 
+        socket.on('playerInput', this.playerInput.bind(this, socket));
+
         socket.on('ping', (callback) => {
             callback()
         })
@@ -77,6 +79,14 @@ export class SocketManager {
 
         const world = this.gameManager.getWorld('map1')
         world?.addPlayer(socket.id, account);
+    }
+
+    playerInput(socket: Socket, input: InputData){
+        if(!input) return
+        if(typeof input.dir.x !== 'number' && typeof input.dir.y !== 'number') return
+        if(typeof input.attackDir.x !== 'number' && typeof input.attackDir.y !== 'number') return
+
+        this.gameManager.handleInput(socket.id, input);
     }
 
     // Not Listener
