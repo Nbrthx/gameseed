@@ -50,7 +50,13 @@ const config: Types.Core.GameConfig = {
     ]
 };
 
-export default new Game(config);
+const StartGame = (parent: string) => {
+
+    return new Game({ ...config, parent });
+
+}
+
+export default StartGame;
 
 document.addEventListener('contextmenu', event => event.preventDefault())
 document.addEventListener("keydown", function(event) {

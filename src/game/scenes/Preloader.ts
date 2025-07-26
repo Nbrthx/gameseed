@@ -30,14 +30,50 @@ export class Preloader extends Scene
         this.load.setPath('assets');
 
         this.load.image('logo', 'logo.png');
+
+        // Environment
+
+        this.load.image('tilemaps', 'environment/tilemaps3.png');
+        this.load.spritesheet('tree1', 'environment/tree1.png', { frameWidth: 96, frameHeight: 128 });
+
+        this.load.tilemapTiledJSON('map1', 'environment/map1.json');
+
+        // Character
+        this.load.image('shadow', 'char/shadow.png')
+        this.load.spritesheet('male', 'char/male.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('male', 'char/male.png', { frameWidth: 64, frameHeight: 64 });
+
     }
 
     create ()
     {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
 
-        //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('male', { frames: [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 5, 6] }),
+            frameRate: 12,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'rundown',
+            frames: this.anims.generateFrameNumbers('male', { frames: [7, 8, 9, 10, 11, 12, 13, 14] }),
+            frameRate: 14,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'runup',
+            frames: this.anims.generateFrameNumbers('male', { frames: [15, 16, 17, 18, 19, 20, 21, 22] }),
+            frameRate: 14,
+            repeat: -1
+        })
+
+        this.anims.create({
+            key: 'tree1-wave',
+            frames: this.anims.generateFrameNumbers('tree1', { frames: [0, 1, 2, 3, 4, 5, 0, 6, 7, 8, 9, 10] }),
+            frameRate: 10,
+            repeat: -1
+        })
+
         this.scene.start('MainMenu');
     }
 }
