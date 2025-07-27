@@ -31,6 +31,17 @@ export class Preloader extends Scene
 
         this.load.image('logo', 'logo.png');
 
+        // Visual Effect
+        this.load.spritesheet('punch', 'effect/punch.png', { frameWidth: 64, frameHeight: 64 })
+        this.load.spritesheet('throw', 'effect/throw.png', { frameWidth: 64, frameHeight: 64 })
+        this.load.spritesheet('sword', 'effect/sword.png', { frameWidth: 96, frameHeight: 96 })
+        this.load.spritesheet('bow', 'effect/bow.png', { frameWidth: 64, frameHeight: 64 })
+        this.load.spritesheet('dagger', 'effect/dagger.png', { frameWidth: 96, frameHeight: 64 })
+
+        this.load.spritesheet('explode', 'effect/explode.png', { frameWidth: 64, frameHeight: 64 })
+        this.load.spritesheet('arrow', 'effect/arrow.png', { frameWidth: 48, frameHeight: 16 })
+        this.load.spritesheet('blue-knife', 'effect/blue-knife.png', { frameWidth: 32, frameHeight: 16 })
+
         // Environment
 
         this.load.image('tilemaps', 'environment/tilemaps3.png');
@@ -50,7 +61,7 @@ export class Preloader extends Scene
 
     create ()
     {
-
+        // Char
         this.anims.create({
             key: 'idle',
             frames: this.anims.generateFrameNumbers('male', { frames: [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 5, 6] }),
@@ -70,6 +81,39 @@ export class Preloader extends Scene
             repeat: -1
         })
 
+        // Visual Effect
+        this.anims.create({
+            key: 'punch-attack',
+            frames: this.anims.generateFrameNumbers('punch', { frames: [0, 1, 2, 3, 4] }),
+            frameRate: 20
+        })
+        this.anims.create({
+            key: 'throw-attack',
+            frames: this.anims.generateFrameNumbers('throw', { frames: [0, 0, 0, 0, 0, 0, 1, 2, 3, 4] }),
+            frameRate: 20
+        })
+        this.anims.create({
+            key: 'sword-attack',
+            frames: this.anims.generateFrameNumbers('sword', { frames: [0, 0, 0, 1, 2, 3, 4, 5, 5] }),
+            frameRate: 20
+        })
+        this.anims.create({
+            key: 'bow-attack',
+            frames: this.anims.generateFrameNumbers('bow', { frames: [0, 1, 2, 3, 4, 4] }),
+            frameRate: 20
+        })
+        this.anims.create({
+            key: 'dagger-attack',
+            frames: this.anims.generateFrameNumbers('dagger', { frames: [0, 0, 0, 1, 1, 2, 3, 4, 5, 6, 7, 8] }),
+            frameRate: 20
+        })
+        this.anims.create({
+            key: 'explode',
+            frames: this.anims.generateFrameNumbers('explode', { frames: [0, 1, 2, 3] }),
+            frameRate: 30
+        })
+
+        // Object Animation
         this.anims.create({
             key: 'tree1-wave',
             frames: this.anims.generateFrameNumbers('tree1', { frames: [0, 1, 2, 3, 4, 5, 0, 6, 7, 8, 9, 10] }),

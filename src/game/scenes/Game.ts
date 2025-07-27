@@ -3,9 +3,10 @@ import p from 'planck'
 import { MapSetup } from '../components/MapSetup';
 import { createDebugGraphics } from '../components/PhysicsDebug';
 import { Player } from '../prefabs/Player';
-import { GameUI } from './GameUI';
+import { GameUI, isMobile } from './GameUI';
 import { Socket } from 'socket.io-client';
 import { GameState, NetworkHandler, OutputData } from '../components/NetworkHandler';
+import { SpatialAudio } from '../components/SpatialAudio';
 
 export class Game extends Scene
 {
@@ -19,6 +20,7 @@ export class Game extends Scene
     debugGraphics: Phaser.GameObjects.Graphics
     mapSetup: MapSetup
     networkHandler: NetworkHandler
+    spatialAudio: SpatialAudio
 
     player: Player;
     attackDir: p.Vec2 = new p.Vec2()
@@ -38,15 +40,44 @@ export class Game extends Scene
         this.debugGraphics = this.add.graphics().setDepth(1000)
         this.mapSetup = new MapSetup(this, 'map1')
 
+        this.spatialAudio = new SpatialAudio(this)
+
         this.UI = (this.scene.get('GameUI') || this.scene.add('GameUI', new GameUI(), true)) as GameUI
 
         this.socket = this.UI.socket
 
         const enterPos = this.mapSetup.enterpoint.get('spawn') || { x: 100, y: 100 }
         this.player = new Player(this, enterPos.x, enterPos.y, this.socket.id as string, this.registry.get('username') || 'null')
-        // scene.spatialAudio.addListenerBody(scene.player.pBody)
+        this.spatialAudio.addListenerBody(this.player.pBody)
         this.player.nameText.setColor('#66ffcc')
         this.camera.startFollow(this.player, true, 0.1, 0.1)
+
+        this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+            if(!this.player) return;
+            if(isMobile()) return
+
+            let x = pointer.worldX-this.player.x
+            let y = pointer.worldY-this.player.y-12
+            const rad = Math.atan2(y, x)
+
+            this.player.aimAssist.setRotation(rad)
+
+            this.camera.setFollowOffset(-x/this.gameScale/4, -y/this.gameScale/4)
+        })
+
+        this.input.on('pointerdown', (pointer: Phaser.Input.Pointer, objects: Phaser.GameObjects.GameObject[]) => {
+            if(!this.player) return;
+            if(isMobile()) return
+            if(objects.length > 0) return
+
+            let x = pointer.worldX-this.player.x
+            let y = pointer.worldY-this.player.y-12
+
+            const dir = new p.Vec2(x, y)
+            dir.normalize()
+
+            this.attackDir = dir
+        })
 
         this.lights.enable()
         this.lights.setAmbientColor(0xeeffcc)

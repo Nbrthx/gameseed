@@ -2,15 +2,66 @@ import { Game } from '../scenes/Game'
 import p from 'planck'
 import { BaseItem } from './BaseItem'
 import { ItemInstance } from './ItemInstance'
+import { Player } from './Player'
 import { SpatialSound } from '../components/SpatialAudio'
-import { TextBox } from './TextBox'
 
-export class Player extends Phaser.GameObjects.Container{
+interface EnemyConfig {
+    id: string
+    name: string
+    maxHealth: number
+    visionDistance: number
+    attackDistance: number
+    weapon: string
+    outfit: [boolean, number, string, string, string, string]
+}
 
+export const enemyList: EnemyConfig[] = [
+    {
+        id: 'enemy1',
+        name: 'Swordsman',
+        maxHealth: 60,
+        visionDistance: 6,
+        attackDistance: 2,
+        weapon: 'sword',
+        outfit: [true, 0xffaaaa, 'basic', 'basic', 'basic', 'basic']
+    },
+    {
+        id: 'enemy2',
+        name: 'Archer',
+        maxHealth: 80,
+        visionDistance: 6,
+        attackDistance: 6,
+        weapon: 'bow',
+        outfit: [false, 0xffaaaa, 'basic', 'basic', 'basic', 'basic']
+    },
+    {
+        id: 'enemy3',
+        name: 'Ninja',
+        maxHealth: 100,
+        visionDistance: 7,
+        attackDistance: 7,
+        weapon: 'blue-knife',
+        outfit: [false, 0xffaaff, 'bodied', 'basic', 'grey', 'basic']
+    },
+    {
+        id: 'enemy4',
+        name: 'Assassin',
+        maxHealth: 120,
+        visionDistance: 7,
+        attackDistance: 2.5,
+        weapon: 'sword',
+        outfit: [true, 0x99ccff, 'spread', 'basic', 'black', 'basic']
+    }
+]
+
+export class Enemy extends Phaser.GameObjects.Container{
+
+    id: string
     uid: string
     maxHealth: number
     health: number
-    speed = 4.2
+
+    config: EnemyConfig
 
     scene: Game
     itemInstance: BaseItem
@@ -18,23 +69,22 @@ export class Player extends Phaser.GameObjects.Container{
     emptyBar: Phaser.GameObjects.Rectangle
     damageBar: Phaser.GameObjects.Rectangle
     healthBar: Phaser.GameObjects.Rectangle
-    nameText: Phaser.GameObjects.Text
-    
-    username: string
-    isPvpProtected: boolean
-
-    audio?: { step: SpatialSound, hit: SpatialSound }
 
     pBody: p.Body
     attackDir: p.Vec2
-    textbox: TextBox
-    aimAssist: Phaser.GameObjects.Rectangle
-    itemIcon: Phaser.GameObjects.Image
 
-    constructor(scene: Game, x: number, y: number, uid: string, username: string){
+    defaultPos: p.Vec2
+    triggerArea: p.Body
+    visionArea: p.Body
+    target: Player | null
+    audio?: { step: SpatialSound; hit: SpatialSound }
+    nameText: Phaser.GameObjects.Text
+
+    constructor(scene: Game, x: number, y: number, id: string, uid: string){
         super(scene, x, y)
 
         this.scene = scene
+        this.id = id
         this.uid = uid
 
         scene.add.existing(this)
@@ -50,41 +100,37 @@ export class Player extends Phaser.GameObjects.Container{
         })
         this.pBody.setUserData(this)
 
-        this.username = username
-        this.isPvpProtected = false
+        this.config = enemyList.find(e => e.id === id) || enemyList[0]
 
-        this.textbox = new TextBox(this.scene, 0, -190)
+        this.defaultPos = this.pBody.getPosition().clone()
 
-        this.maxHealth = 100
+        this.maxHealth = this.config.maxHealth
         this.health = this.maxHealth
 
         this.emptyBar = scene.add.rectangle(0, -130, 166, 18, 0x494449).setRounded(4)
         this.damageBar = scene.add.rectangle(0, -130, 164, 16, 0xffccaa).setRounded(4)
-        this.healthBar = scene.add.rectangle(0, -130, 164, 16, 0x00aa77).setRounded(4)
+        this.healthBar = scene.add.rectangle(0, -130, 164, 16, 0xbb4433).setRounded(4)
 
         this.attackDir = new p.Vec2(0, 0)
-        this.itemInstance = new ItemInstance(scene, this.pBody, 'punch').itemInstance
+        this.itemInstance = new ItemInstance(scene, this.pBody, this.config.weapon).itemInstance
 
-        this.sprite = scene.add.sprite(0, -36, 'player').setOrigin(0.5, 0.5).setScale(scene.gameScale)
+        this.sprite = scene.add.sprite(0, -100, 'male').setOrigin(0.5).setScale(scene.gameScale)
         this.sprite.play('idle', true)
 
-        this.itemIcon = scene.add.image(56, 0, '').setOrigin(0.5, 0.5)
-        this.itemIcon.setScale(3)
-        this.itemIcon.setTint(0x000000)
-        this.itemIcon.setRotation(Math.PI/8)
-        this.itemIcon.setVisible(false)
-
-        this.aimAssist = scene.add.rectangle(0,12, 96, 24, 0xffffff, 0.5)
-        this.aimAssist.setOrigin(-1.5, 0.5).setVisible(false).setRounded(8)
+        // const [isMale, color, hair, face, body, leg] = this.config.outfit
+        // this.sprite.setOutfit(isMale, color, hair, face, body, leg)
         
         const shadow = scene.add.image(0, 19*scene.gameScale, 'shadow').setAlpha(0.4).setScale(scene.gameScale)
 
-        this.nameText = scene.add.text(0, -38*scene.gameScale, username, {
-            fontFamily: 'PixelFont', fontSize: 24,
+        this.nameText = scene.add.text(0, -38*scene.gameScale, this.config.name, {
+            fontFamily: 'PixelFont', fontSize: 24, letterSpacing: 2,
             stroke: '#000000', strokeThickness: 4
         }).setOrigin(0.5).setResolution(4)
 
-        this.add([shadow, this.aimAssist, this.itemInstance, this.sprite, this.itemIcon, this.emptyBar, this.damageBar, this.healthBar, this.nameText, this.textbox])
+        this.triggerArea = this.createArea(this.config.attackDistance, true)
+        this.visionArea = this.createArea(this.config.visionDistance)
+
+        this.add([shadow, this.itemInstance, this.sprite, this.emptyBar, this.damageBar, this.healthBar, this.nameText])
     }
 
     update(){
@@ -104,7 +150,7 @@ export class Player extends Phaser.GameObjects.Container{
         
             if(vel.x > 0) this.sprite.setFlipX(false)
             else if(vel.x < 0) this.sprite.setFlipX(true)
-
+            
             const { x, y } = this.pBody.getPosition()
             this.audio?.step.playSound(x, y)
         }
@@ -112,26 +158,15 @@ export class Player extends Phaser.GameObjects.Container{
 
         if(this.attackDir.length() > 0){
             if(this.itemInstance) this.itemInstance.use(this.attackDir.x, this.attackDir.y)
-
             this.attackDir = new p.Vec2(0, 0)
         }
 
-        if(this.itemInstance.sprite.anims.isPlaying){
-            this.itemIcon.setAlpha(0)
-        }
-        else this.itemIcon.setAlpha(0.7)
-
         this.setDepth(this.y/this.scene.gameScale)
-
-        const isReady = this.itemInstance.timestamp+this.itemInstance.config.cooldown < Date.now()
-        if(this.aimAssist.visible && isReady) this.aimAssist.setFillStyle(0xffffff, 0.5)
-        else if(this.aimAssist.visible) this.aimAssist.setFillStyle(0xcc3333, 0.4)
 
         this.x = this.pBody.getPosition().x*this.scene.gameScale*32
         this.y = this.pBody.getPosition().y*this.scene.gameScale*32
 
-        if(this.isPvpProtected) this.sprite.setAlpha(0.7)
-        else this.sprite.setAlpha(1)
+        this.triggerArea.setPosition(this.pBody.getPosition())
         
         this.barUpdate(this.healthBar)
     }
@@ -143,6 +178,17 @@ export class Player extends Phaser.GameObjects.Container{
         }
     }
 
+    createArea(radius: number, isTrigger = false){
+        const pBody = isTrigger ? this.scene.world.createKinematicBody() : this.scene.world.createBody()
+        pBody.createFixture({
+            shape: new p.Circle(new p.Vec2(0, 0), radius),
+            isSensor: true
+        })
+        pBody.setUserData(this)
+        pBody.setPosition(this.pBody.getPosition())
+        return pBody
+    }
+
     hitEffect(){
         let itr = 0
         const splash = () => {
@@ -150,10 +196,12 @@ export class Player extends Phaser.GameObjects.Container{
                 if(this.damageBar.active){
                     this.damageBar.setSize(164*this.health/this.maxHealth, 16)
                     this.damageBar.setX(-82-82*this.health/-this.maxHealth)
+                    this.sprite.setPipeline('Light2D')
                 }
                 return
             }
 
+            this.sprite.resetPipeline()
             if(this.sprite.isTinted) this.sprite.clearTint()
             else this.sprite.setTintFill(0xffffff)
             itr++
@@ -167,6 +215,8 @@ export class Player extends Phaser.GameObjects.Container{
 
     destroy() {
         this.scene.world.destroyBody(this.pBody)
+        this.scene.world.destroyBody(this.triggerArea)
+        this.scene.world.destroyBody(this.visionArea)
         if(this.itemInstance) this.itemInstance.destroy()
         super.destroy()
     }

@@ -44,7 +44,6 @@ export class MainMenu extends Scene
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5);
-        this.title.setInteractive();
 
         const inputname = this.add.dom(this.scale.width/2, this.scale.height/2+100).createFromCache('inputname')
         const submitBtn = inputname.getChildByID('submit') as HTMLButtonElement
@@ -59,6 +58,7 @@ export class MainMenu extends Scene
                     inputname.setVisible(false)
                     this.registry.set('socket', socket)
                     this.registry.set('username', username.value)
+                    this.title.setInteractive();
                 })
             })
         })

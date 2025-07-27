@@ -15,6 +15,8 @@ export class GameUI extends Scene{
         right?: boolean
     }
 
+    debugText: Phaser.GameObjects.Text
+
     constructor(){
         super('GameUI')
     }
@@ -23,6 +25,20 @@ export class GameUI extends Scene{
         this.socket = this.registry.get('socket')
 
         this.keyboardInput = {}
+
+        this.debugText = this.add.text(100, 100, '', {
+            fontFamily: 'PixelFont', fontSize: 24,
+            stroke: '#000000', strokeThickness: 4
+        }).setOrigin(0)
+
+        setInterval(() => {
+            const then = Date.now()
+            this.socket.emit('ping', () => {
+                const fps = Math.floor(this.game.loop.actualFps*100)/100
+                const now = Date.now()
+                this.debugText.setText('Ping: '+ (now-then)+'ms\nFPS: '+fps)
+            })
+        }, 1000)
     }
 
     update(){
