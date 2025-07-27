@@ -24,19 +24,16 @@ function xhrApi(method: string, url: string, json: {}, callback: (data: any) => 
     }
 }
 
-export class MainMenu extends Scene
-{
+export class MainMenu extends Scene {
     background: GameObjects.Image;
     logo: GameObjects.Image;
     title: GameObjects.Text;
 
-    constructor ()
-    {
+    constructor () {
         super('MainMenu');
     }
 
-    create ()
-    {
+    create () {
         this.logo = this.add.image(this.scale.width/2, this.scale.height/2-100, 'logo');
 
         this.title = this.add.text(this.scale.width/2, this.scale.height/2, 'Play', {
@@ -65,6 +62,7 @@ export class MainMenu extends Scene
 
         this.title.once('pointerdown', () => {
 
+            this.scale.startFullscreen();
             this.scene.start('Game');
 
         });

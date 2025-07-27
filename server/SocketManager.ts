@@ -56,6 +56,8 @@ export class SocketManager {
 
         socket.on('playerInput', this.playerInput.bind(this, socket));
 
+        socket.on('changeSkill', this.changeSkill.bind(this, socket));
+
         socket.on('ping', (callback) => {
             callback()
         })
@@ -87,6 +89,15 @@ export class SocketManager {
         if(typeof input.attackDir.x !== 'number' && typeof input.attackDir.y !== 'number') return
 
         this.gameManager.handleInput(socket.id, input);
+    }
+
+    changeSkill(socket: Socket, index: number){
+        const player = this.getPlayer(socket.id)
+        if(!player) return
+        if(index < 0 || index > 4) return
+
+        player.equipItem(index)
+        socket.broadcast.to(player.scene.id).emit('otherSkillUpdate', socket.id, index)
     }
 
     // Not Listener

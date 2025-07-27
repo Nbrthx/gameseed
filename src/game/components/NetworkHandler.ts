@@ -3,6 +3,7 @@ import { Socket } from "socket.io-client"
 import { Game } from "../scenes/Game"
 import { isMobile } from "../scenes/GameUI"
 import { Player } from "../prefabs/Player"
+import { Projectile, ProjectileConfig } from '../prefabs/items/RangeWeapon'
 
 export interface OutputData{
     uid: string,
@@ -26,7 +27,7 @@ export interface GameState{
         uid: string
         pos: { x: number, y: number }
         dir: { x: number, y: number }
-        // config: ProjectileConfig
+        config: ProjectileConfig
     }[]
 }
 
@@ -72,6 +73,8 @@ export class NetworkHandler{
         this.socket.on('playerLeft', this.playerLeft.bind(this))
 
         this.socket.on('output', this.output.bind(this))
+
+        this.socket.on('otherSkillUpdate', this.otherSkillUpdate.bind(this))
     }
 
     joinGame(account: Account, others: {
@@ -276,43 +279,50 @@ export class NetworkHandler{
         //     }
         // })
 
-        // data.projectiles.forEach(projectileData => {
-        //     const existProjectile = scene.projectiles.find(v => v.uid == projectileData.uid)
+        data.projectiles.forEach(projectileData => {
+            const existProjectile = scene.projectiles.find(v => v.uid == projectileData.uid)
 
-        //     const pos = new p.Vec2(projectileData.pos.x, projectileData.pos.y)
-        //     const dir = new p.Vec2(projectileData.dir.x, projectileData.dir.y)
+            const pos = new p.Vec2(projectileData.pos.x, projectileData.pos.y)
+            const dir = new p.Vec2(projectileData.dir.x, projectileData.dir.y)
 
-        //     if(!existProjectile){
-        //         const projectile = new Projectile(this.scene, pos, dir, projectileData.config, projectileData.uid)
-        //         this.scene.projectiles.push(projectile)
-        //     }
-        //     else{
-        //         existProjectile.pBody.setPosition(pos)
-        //         existProjectile.update()
-        //     }
-        // })
+            if(!existProjectile){
+                const projectile = new Projectile(this.scene, pos, dir, projectileData.config, projectileData.uid)
+                this.scene.projectiles.push(projectile)
+            }
+            else{
+                existProjectile.pBody.setPosition(pos)
+                existProjectile.update()
+            }
+        })
 
-        // scene.projectiles.sort(a => a.active ? 1 : -1)
-        // scene.projectiles.slice().reverse().forEach((projectile) => {
-        //     const projectileData = data.projectiles.find(v => v.uid == projectile.uid)
-        //     if(!projectileData){
-        //         scene.projectiles.splice(scene.projectiles.indexOf(projectile), 1)
-        //         projectile.destroy()
+        scene.projectiles.sort(a => a.active ? 1 : -1)
+        scene.projectiles.slice().reverse().forEach((projectile) => {
+            const projectileData = data.projectiles.find(v => v.uid == projectile.uid)
+            if(!projectileData){
+                scene.projectiles.splice(scene.projectiles.indexOf(projectile), 1)
+                projectile.destroy()
 
-        //         const x = Math.cos(projectile.pBody.getAngle())*projectile.config.hitboxSize.width*32*4
-        //         const y = Math.sin(projectile.pBody.getAngle())*projectile.config.hitboxSize.height*32*4
+                const x = Math.cos(projectile.pBody.getAngle())*projectile.config.hitboxSize.width*32*4
+                const y = Math.sin(projectile.pBody.getAngle())*projectile.config.hitboxSize.height*32*4
 
-        //         this.scene.add.particles(projectile.x+x, projectile.y+y, 'explode', {
-        //             speedX: {min: -100, max: 100},
-        //             speedY: {min: -100, max: 100},
-        //             scale: {start: 4, end: 4},
-        //             alpha: {start: 1, end: 0},
-        //             anim: 'explode',
-        //             lifespan: 160
-        //         }).explode(1)
-        //     }
-        // })
+                this.scene.add.particles(projectile.x+x, projectile.y+y, 'explode', {
+                    speedX: {min: -100, max: 100},
+                    speedY: {min: -100, max: 100},
+                    scale: {start: 4, end: 4},
+                    alpha: {start: 1, end: 0},
+                    anim: 'explode',
+                    lifespan: 160
+                }).explode(1)
+            }
+        })
         
+    }
+
+    otherSkillUpdate(uid: string, index: number){
+        const other = this.scene.others.find(v => v.uid == uid)
+        if(!other) return
+
+        other.equipItem(index)
     }
 
     destroy(){

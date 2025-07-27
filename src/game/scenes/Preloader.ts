@@ -54,6 +54,16 @@ export class Preloader extends Scene
         this.load.spritesheet('male', 'char/male.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('male', 'char/male.png', { frameWidth: 64, frameHeight: 64 });
 
+        // UI
+        this.load.image('ui-skills', 'ui/skills.png')
+        this.load.image('ui-selected-skill', 'ui/selected-skill.png')
+        this.load.image('ui-change-outfit', 'ui/change-outfit.png')
+        this.load.image('ui-fullscreen', 'ui/fullscreen.png')
+        this.load.image('ui-debug', 'ui/debug.png')
+        this.load.image('ui-chat', 'ui/chat.png')
+
+        this.load.spritesheet('cooldown-anim', 'ui/cooldown-anim.png', { frameWidth: 32, frameHeight: 32 })
+
         // HTML
         this.load.html('inputname', 'html/inputname.html');
 

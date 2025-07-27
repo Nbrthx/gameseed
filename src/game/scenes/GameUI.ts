@@ -1,5 +1,7 @@
 import { Scene } from "phaser";
 import { Socket } from "socket.io-client";
+import { Game } from "./Game";
+import { SkillUI } from "../prefabs/ui/SkillUI";
 
 export const isMobile = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
@@ -15,7 +17,10 @@ export class GameUI extends Scene{
         right?: boolean
     }
 
+    gameScene: Game
     debugText: Phaser.GameObjects.Text
+
+    skillUI: SkillUI
 
     constructor(){
         super('GameUI')
@@ -23,6 +28,8 @@ export class GameUI extends Scene{
 
     create(){
         this.socket = this.registry.get('socket')
+
+        this.gameScene = this.scene.get('Game') as Game
 
         this.keyboardInput = {}
 
@@ -39,6 +46,29 @@ export class GameUI extends Scene{
                 this.debugText.setText('Ping: '+ (now-then)+'ms\nFPS: '+fps)
             })
         }, 1000)
+
+        const bottomBox = this.add.rectangle(this.scale.width/2, this.scale.height, this.scale.width, 80, 0x111111, 0.5)
+        bottomBox.setOrigin(0.5, 1)
+
+        const debugToggle = this.add.image(this.scale.width - 100, 50, 'ui-debug').setScale(4)
+        debugToggle.setInteractive()
+        debugToggle.on('pointerup', () => {
+            this.gameScene.isDebug = !this.gameScene.isDebug
+            this.gameScene.debugGraphics.clear()
+        })
+
+        const fullscreenToggle = this.add.image(this.scale.width - 200, 50, 'ui-fullscreen').setScale(4)
+        fullscreenToggle.setInteractive()
+        fullscreenToggle.on('pointerdown', () => {
+            if (this.scale.isFullscreen){
+                this.scale.stopFullscreen();
+            }
+            else{
+                this.scale.startFullscreen();
+            }
+        })
+
+        this.skillUI = new SkillUI(this)
     }
 
     update(){
@@ -48,5 +78,7 @@ export class GameUI extends Scene{
             left: this.input.keyboard?.addKey('A', false)?.isDown,
             right: this.input.keyboard?.addKey('D', false)?.isDown
         }
+
+        if(this.skillUI.active) this.skillUI.update()
     }
 }

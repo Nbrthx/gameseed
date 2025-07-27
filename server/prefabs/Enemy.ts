@@ -75,7 +75,7 @@ export class Enemy{
         this.health = this.maxHealth
 
         this.attackDir = new p.Vec2(0, 0)
-        this.itemInstance = new ItemInstance(scene, this.pBody, this.config.weapon).itemInstance
+        this.itemInstance = new ItemInstance(scene, this.pBody).itemInstance
         if(this.itemInstance instanceof MeleeWeapon){
             this.scene.addHitbox(this.itemInstance.hitbox, this.scene.entityBodys)
         }
@@ -151,7 +151,6 @@ export class Enemy{
 
         if(this.attackDir.length() > 0){
             if(this.itemInstance){
-                this.refreshWeapon()
                 this.itemInstance.use(this.attackDir.x, this.attackDir.y)
             }
 
@@ -234,16 +233,6 @@ export class Enemy{
         if(!this.target){
             this.health += 0.03
             if(this.health > this.maxHealth) this.health = this.maxHealth
-        }
-    }
-
-    refreshWeapon(){
-        if(this.itemInstance){
-            this.itemInstance.destroy()
-            this.itemInstance = new ItemInstance(this.scene, this.pBody, this.config.weapon).itemInstance
-            if(this.itemInstance instanceof MeleeWeapon){
-                this.scene.addHitbox(this.itemInstance.hitbox, this.scene.entityBodys)
-            }
         }
     }
 

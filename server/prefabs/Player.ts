@@ -5,6 +5,8 @@ import { BaseItem } from './BaseItem'
 import { ItemInstance } from './ItemInstance'
 // import { MeleeWeapon } from './items/MeleeWeapon'
 import { Quest } from '../components/Quests'
+import { MagicBook } from './MagicBook'
+import { MeleeWeapon } from './items/MeleeWeapon'
 
 export class Player{
 
@@ -25,6 +27,7 @@ export class Player{
     knockback: number
     knockbackDir: p.Vec2
 
+    magicBook: MagicBook
     outfit: {
         isMale: boolean
         hair: string
@@ -56,7 +59,9 @@ export class Player{
         this.maxHealth = 100
         this.health = account.health || this.maxHealth
 
-        this.itemInstance = new ItemInstance(scene, this.pBody, 'punch').itemInstance
+        this.magicBook = new MagicBook('warrior')
+
+        this.itemInstance = new ItemInstance(scene, this.pBody).itemInstance
         this.attackDir = new p.Vec2(0, 0)
 
         this.force = 0
@@ -71,6 +76,8 @@ export class Player{
     update(){
         if(this.attackDir.length() > 0){
             this.itemInstance.use(this.attackDir.x, this.attackDir.y)
+
+            this.magicBook.refreshTimestamp()
 
             this.attackDir = new p.Vec2(0, 0)
         }
@@ -112,6 +119,27 @@ export class Player{
                 return
             }
         }
+    }
+
+    equipItem(index: number){
+        this.scene.world.queueUpdate(() => {
+            let skill = this.magicBook.skills[index]
+
+            if(this.itemInstance){
+                const timestamp = skill.timestamp
+                this.magicBook.setTimestamp(timestamp)
+                this.itemInstance.destroy()
+            }
+            this.magicBook.activeIndex = index
+
+            const newItemInstance = new ItemInstance(this.scene, this.pBody, skill.id).itemInstance
+            newItemInstance.timestamp = skill.timestamp
+            if(newItemInstance instanceof MeleeWeapon){
+                this.scene.addHitbox(newItemInstance.hitbox, this.scene.entityBodys)
+            }
+
+            this.itemInstance = newItemInstance
+        })
     }
 
     destroy(){

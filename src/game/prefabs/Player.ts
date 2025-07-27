@@ -4,6 +4,7 @@ import { BaseItem } from './BaseItem'
 import { ItemInstance } from './ItemInstance'
 import { SpatialSound } from '../components/SpatialAudio'
 import { TextBox } from './TextBox'
+import { MagicBook } from './MagicBook'
 
 export class Player extends Phaser.GameObjects.Container{
 
@@ -13,7 +14,9 @@ export class Player extends Phaser.GameObjects.Container{
     speed = 4.2
 
     scene: Game
+    magicBook: MagicBook
     itemInstance: BaseItem
+
     sprite: Phaser.GameObjects.Sprite
     emptyBar: Phaser.GameObjects.Rectangle
     damageBar: Phaser.GameObjects.Rectangle
@@ -61,6 +64,8 @@ export class Player extends Phaser.GameObjects.Container{
         this.emptyBar = scene.add.rectangle(0, -130, 166, 18, 0x494449).setRounded(4)
         this.damageBar = scene.add.rectangle(0, -130, 164, 16, 0xffccaa).setRounded(4)
         this.healthBar = scene.add.rectangle(0, -130, 164, 16, 0x00aa77).setRounded(4)
+
+        this.magicBook = new MagicBook('warrior')
 
         this.attackDir = new p.Vec2(0, 0)
         this.itemInstance = new ItemInstance(scene, this.pBody, 'punch').itemInstance
@@ -113,6 +118,8 @@ export class Player extends Phaser.GameObjects.Container{
         if(this.attackDir.length() > 0){
             if(this.itemInstance) this.itemInstance.use(this.attackDir.x, this.attackDir.y)
 
+            this.magicBook.refreshTimestamp()
+
             this.attackDir = new p.Vec2(0, 0)
         }
 
@@ -163,6 +170,28 @@ export class Player extends Phaser.GameObjects.Container{
         splash()
         const { x, y } = this.pBody.getPosition()
         this.audio?.hit.playSound(x, y, true, false)
+    }
+
+    equipItem(index: number){
+        this.pBody.getWorld().queueUpdate(() => {
+            const item = this.magicBook.skills[index]
+
+            if(this.itemInstance){
+                const timestamp = item.timestamp
+                this.magicBook.setTimestamp(timestamp)
+                this.itemInstance.destroy()
+            }
+            this.magicBook.activeIndex = index
+
+            const newItemInstance = new ItemInstance(this.scene, this.pBody, item.id).itemInstance
+            newItemInstance.timestamp = item.timestamp
+
+            if(this.scene.textures.exists('icon-'+item.id)) this.itemIcon.setTexture('icon-'+item.id).setVisible(true)
+            else this.itemIcon.setVisible(false)
+
+            this.itemInstance = newItemInstance
+            this.addAt(this.itemInstance, 0)
+        })
     }
 
     destroy() {

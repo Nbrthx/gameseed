@@ -7,6 +7,7 @@ import { GameUI, isMobile } from './GameUI';
 import { Socket } from 'socket.io-client';
 import { GameState, NetworkHandler, OutputData } from '../components/NetworkHandler';
 import { SpatialAudio } from '../components/SpatialAudio';
+import { Projectile } from '../prefabs/items/RangeWeapon';
 
 export class Game extends Scene
 {
@@ -17,6 +18,7 @@ export class Game extends Scene
     UI: GameUI
     socket: Socket
 
+    isDebug: boolean = false
     debugGraphics: Phaser.GameObjects.Graphics
     mapSetup: MapSetup
     networkHandler: NetworkHandler
@@ -25,6 +27,8 @@ export class Game extends Scene
     player: Player;
     attackDir: p.Vec2 = new p.Vec2()
     others: Player[] = []
+    projectiles: Projectile[] = []
+
     realBodyPos: Map<p.Body, { x: number, y: number }> = new Map()
 
     constructor () {
@@ -92,7 +96,7 @@ export class Game extends Scene
 
         this.handleOutput()
 
-        createDebugGraphics(this, this.debugGraphics)
+        if(this.isDebug) createDebugGraphics(this, this.debugGraphics)
     }
 
     handleInput(){
@@ -123,8 +127,6 @@ export class Game extends Scene
             })
             this.attackDir = new p.Vec2()
         }
-
-        this.player.update()
     }
 
     handleOutput(){
@@ -185,6 +187,8 @@ export class Game extends Scene
 
             this.networkHandler.update(mergedGameState); // Panggil update sekali dengan data yang sudah digabung
         }
+
+        this.player.update()
 
         this.others.forEach(other => {
             other.update()
