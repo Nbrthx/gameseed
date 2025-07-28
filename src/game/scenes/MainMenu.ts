@@ -1,5 +1,5 @@
 import { Scene, GameObjects } from 'phaser';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 function xhrApi(method: string, url: string, json: {}, callback: (data: any) => void){
     const xhr = new XMLHttpRequest();
@@ -49,22 +49,32 @@ export class MainMenu extends Scene {
             
             if(!username.value) return
 
-            const socket = io('http://localhost:3000', { transports: ['websocket'] });
-            socket.on('connect', () => {
+            if(!this.registry.get('socket')){
+                const socket = io('http://localhost:3000', { transports: ['websocket'] });
+                socket.on('connect', () => {
+                    xhrApi('POST', 'http://localhost:3000/login', { id: socket.id, username: username.value }, (_data: any) => {
+                        inputname.setVisible(false)
+                        this.registry.set('socket', socket)
+                        this.registry.set('username', username.value)
+                        this.title.setInteractive();
+                    })
+                })
+            }
+            else{
+                const socket = this.registry.get('socket') as Socket
                 xhrApi('POST', 'http://localhost:3000/login', { id: socket.id, username: username.value }, (_data: any) => {
                     inputname.setVisible(false)
-                    this.registry.set('socket', socket)
                     this.registry.set('username', username.value)
                     this.title.setInteractive();
                 })
-            })
+            }
         })
 
         this.title.once('pointerdown', () => {
 
             this.scale.startFullscreen();
             this.scene.start('Game');
-
+            
         });
     }
 }

@@ -14,7 +14,7 @@ export class Game extends Scene
 {
     camera: Phaser.Cameras.Scene2D.Camera;
     world: p.World
-    worldId: string = 'map1'
+    worldId: string
     gameScale: number = 4
     UI: GameUI
     socket: Socket
@@ -33,6 +33,9 @@ export class Game extends Scene
 
     realBodyPos: Map<p.Body, { x: number, y: number }> = new Map()
 
+    accumulator: number = 0;
+    previousTime: number;
+
     constructor () {
         super('Game');
     }
@@ -42,6 +45,7 @@ export class Game extends Scene
         this.camera.setBackgroundColor(0x060910);
 
         this.world = new p.World
+        this.worldId = 'map1'
 
         this.debugGraphics = this.add.graphics().setDepth(1000)
         this.mapSetup = new MapSetup(this, 'map1')
@@ -51,7 +55,7 @@ export class Game extends Scene
         this.UI = (this.scene.get('GameUI') || this.scene.add('GameUI', new GameUI(), true)) as GameUI
 
         this.socket = this.UI.socket
-
+        
         const enterPos = this.mapSetup.enterpoint.get('spawn') || { x: 100, y: 100 }
         this.player = new Player(this, enterPos.x, enterPos.y, this.socket.id as string, this.registry.get('username') || 'null')
         this.spatialAudio.addListenerBody(this.player.pBody)
@@ -89,16 +93,26 @@ export class Game extends Scene
         this.lights.setAmbientColor(0xeeffcc)
 
         this.networkHandler = new NetworkHandler(this)
+
+        this.previousTime = performance.now()
     }
 
-    update(){
-        this.world.step(1/60)
+    update(currentTime: number){
+        if(!this.networkHandler || !this.networkHandler.isAuthed) return;
 
-        this.handleInput()
+        const frameTime = (currentTime - this.previousTime) / 1000; // in seconds
+        this.previousTime = currentTime;
+        this.accumulator += frameTime;
+        while (this.accumulator >= 1/60) {
+            this.world.step(1/60);
+            this.accumulator -= 1/60;
 
-        this.handleOutput()
+            this.handleInput()
 
-        if(this.isDebug) createDebugGraphics(this, this.debugGraphics)
+            this.handleOutput()
+
+            if(this.isDebug) createDebugGraphics(this, this.debugGraphics)
+        }
     }
 
     handleInput(){

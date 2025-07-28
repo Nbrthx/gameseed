@@ -60,6 +60,8 @@ export class SocketManager {
 
         socket.on('confirmChangeWorld', this.confirmChangeWorld.bind(this, socket));
 
+        socket.on('changeBook', this.changeBook.bind(this, socket));
+
         socket.on('ping', (callback) => {
             callback()
         })
@@ -116,6 +118,16 @@ export class SocketManager {
         world.addPlayer(socket.id, player.account, player.scene.id.split(':')[0] == 'duel' ? 'spawn' : player.scene.id)
 
         this.gameManager.playerChangeWorld.delete(socket.id)
+    }
+
+    changeBook(socket: Socket, id: string){
+        const player = this.getPlayer(socket.id)
+        if(!player) return
+
+        player.magicBook.changeBook(id)
+        player.equipItem(0)
+
+        socket.broadcast.to(player.scene.id).emit('otherBookUpdate', socket.id, id)
     }
 
     // Not Listener

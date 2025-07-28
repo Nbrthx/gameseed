@@ -66,6 +66,8 @@ export class NetworkHandler{
             window.location.reload()
         }, 5000)
 
+        console.log(this.socket.id)
+
         this.socket.emit('joinGame')
 
         this.socket.on('joinGame', this.joinGame.bind(this))
@@ -79,6 +81,15 @@ export class NetworkHandler{
         this.socket.on('otherSkillUpdate', this.otherSkillUpdate.bind(this))
 
         this.socket.on('changeWorld', this.changeWorld.bind(this))
+
+        this.socket.on('otherBookUpdate', this.otherBookUpdate.bind(this))
+
+        this.socket.on('disconnect', () => {
+            this.socket.connect()
+            setTimeout(() => {
+                location.reload()
+            }, 10000)
+        })
     }
 
     joinGame(account: Account, others: {
@@ -102,9 +113,10 @@ export class NetworkHandler{
         if(account) this.isAuthed = true
 
         scene.player.equipItem(0)
+        scene.player.health = account.health
         // scene.player.syncData(account.health, account.inventory, 0, account.outfit)
 
-        // scene.UI.setupUI(scene.player)
+        scene.UI.setupUI(scene.player)
 
         others.forEach(v => {
             if(v.uid == this.socket.id) return
@@ -112,6 +124,8 @@ export class NetworkHandler{
 
             const other = new Player(scene, v.pos.x*scene.gameScale*32, v.pos.y*scene.gameScale*32, v.uid, v.username)
             // other.syncData(v.health, v.items, v.activeIndex, v.outfit)
+            other.equipItem(v.activeIndex)
+            other.health = v.health
 
             scene.others.push(other)
         })
@@ -152,7 +166,9 @@ export class NetworkHandler{
     }
 
     output(data: GameState){
+        console.log('data received', data.id, this.scene.worldId)
         if(data.id != this.scene.worldId) return
+
 
         this.pendingOutput.push(data)
     }
@@ -197,6 +213,7 @@ export class NetworkHandler{
                 if(scene.player.health <= 0){
                     this.destroy()
                     scene.scene.start('GameOver')
+
                 }
             }
             else if(other){
@@ -360,6 +377,14 @@ export class NetworkHandler{
             scene.world.queueUpdate(() => scene.socket.emit('confirmChangeWorld'))
         }
 
+    }
+
+    otherBookUpdate(uid: string, id: string){
+        const other = this.scene.others.find(v => v.uid == uid)
+        if(!other) return
+
+        other.magicBook.changeBook(id)
+        other.equipItem(0)
     }
 
     destroy(){

@@ -137,7 +137,19 @@ export class Game{
         this.broadcastOutput()
 
         this.players.forEach(player => {
-            player.update()
+            if(player.health <= 0){
+                player.account.health = 100
+                this.removePlayer(player.uid)
+
+                if(this.id.split(':')[0] == 'duel') this.players.forEach(player2 => {
+                    player2.account.health = 100
+                    this.world.queueUpdate(() => {
+                        this.gameManager.playerChangeWorld.set(player2.uid, 'map1')
+                        this.gameManager.io.to(player2.uid).emit('changeWorld', null, 'map1', false, 0)
+                    })
+                })
+            }
+            else player.update()
         })
 
         this.enemies.forEach(enemy => {
@@ -255,6 +267,7 @@ export class Game{
                 uid: v.uid,
                 username: v.account.username,
                 pos: v.pBody.getPosition(),
+                activeIndex: v.magicBook.activeIndex,
                 health: v.health,
                 outfit: v.outfit
             }

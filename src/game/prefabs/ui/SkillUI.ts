@@ -11,7 +11,7 @@ export class SkillUI extends Phaser.GameObjects.Container{
     cooldownBoxs: Phaser.GameObjects.Sprite[] = []
 
     constructor(scene: GameUI){
-        super(scene, scene.scale.width-100, scene.scale.height-16)
+        super(scene, scene.scale.width/2+260, scene.scale.height-16)
 
         this.scene = scene
         scene.add.existing(this)

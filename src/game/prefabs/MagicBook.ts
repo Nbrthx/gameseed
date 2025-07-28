@@ -1,6 +1,6 @@
 import { itemList } from "./ItemInstance"
 
-const magicBookList: {
+export const magicBookList: {
     id: string
     name: string
     skills: [string, string, string]
@@ -19,6 +19,7 @@ const magicBookList: {
 
 export class MagicBook{
 
+    id: string
     skills: [
         {
             id: string,
@@ -42,6 +43,19 @@ export class MagicBook{
     constructor(id: string){
         const book = magicBookList.find(v => v.id === id)?.skills || ['sword', 'bow', 'dagger']
 
+        this.id = id
+        this.skills = [
+            { id: 'punch', timestamp: Date.now() },
+            { id: book[0], timestamp: Date.now() },
+            { id: book[1], timestamp: Date.now() },
+            { id: book[2], timestamp: Date.now() }
+        ]
+    }
+
+    changeBook(id: string){
+        const book = magicBookList.find(v => v.id === id)?.skills || ['sword', 'bow', 'dagger']
+
+        this.id = id
         this.skills = [
             { id: 'punch', timestamp: Date.now() },
             { id: book[0], timestamp: Date.now() },

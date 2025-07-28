@@ -3,6 +3,8 @@ import { Socket } from "socket.io-client";
 import { Game } from "./Game";
 import { SkillUI } from "../prefabs/ui/SkillUI";
 import { AlertBoxUI } from "../prefabs/ui/AlertBoxUI";
+import { BooksUI } from "../prefabs/ui/BooksUI";
+import { Player } from "../prefabs/Player";
 
 export const isMobile = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
@@ -23,15 +25,17 @@ export class GameUI extends Scene{
 
     skillUI: SkillUI
     alertBox: AlertBoxUI;
+    bookButton: Phaser.GameObjects.Image;
+    booksUI: BooksUI;
 
     constructor(){
         super('GameUI')
     }
 
     create(){
-        this.socket = this.registry.get('socket')
-
         this.gameScene = this.scene.get('Game') as Game
+        
+        this.socket = this.registry.get('socket')
 
         this.keyboardInput = {}
 
@@ -74,7 +78,15 @@ export class GameUI extends Scene{
             }
         })
 
+        this.bookButton = this.add.image(this.scale.width-200, this.scale.height - 80, 'ui-book-button')
+        this.bookButton.setScale(4).setInteractive()
+        this.bookButton.on('pointerdown', () => {
+            this.booksUI.setVisible(!this.booksUI.visible)
+        })
+
         this.skillUI = new SkillUI(this)
+
+        this.handleGameEvent()
     }
 
     update(){
@@ -86,5 +98,24 @@ export class GameUI extends Scene{
         }
 
         if(this.skillUI.active) this.skillUI.update()
+    }
+
+    handleGameEvent(){
+        this.gameScene.events.on('start', () => {
+            this.gameScene = this.scene.get('Game') as Game
+            this.scene.setVisible(true)
+        })
+        this.gameScene.events.on('shutdown', () => {
+            console.log('shutdown')
+            this.scene.setVisible(false)
+            this.booksUI.destroy(true)
+        })
+    }
+
+    setupUI(_player: Player){
+        if(this.booksUI) this.booksUI.destroy(true)
+
+        this.booksUI = new BooksUI(this)
+        this.booksUI.setVisible(false)
     }
 }

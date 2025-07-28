@@ -66,6 +66,7 @@ export class Preloader extends Scene
         this.load.image('ui-fullscreen', 'ui/fullscreen.png')
         this.load.image('ui-debug', 'ui/debug.png')
         this.load.image('ui-chat', 'ui/chat.png')
+        this.load.image('ui-book-button', 'ui/book-button.png')
 
         this.load.spritesheet('cooldown-anim', 'ui/cooldown-anim.png', { frameWidth: 32, frameHeight: 32 })
 
