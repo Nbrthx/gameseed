@@ -122,15 +122,15 @@ export class Player{
     }
 
     equipItem(index: number){
+        this.magicBook.activeIndex = index
         this.scene.world.queueUpdate(() => {
             let skill = this.magicBook.skills[index]
 
             if(this.itemInstance){
                 const timestamp = skill.timestamp
-                this.magicBook.setTimestamp(timestamp)
+                this.magicBook.setTimestamp(this.magicBook.activeIndex, timestamp)
                 this.itemInstance.destroy()
             }
-            this.magicBook.activeIndex = index
 
             const newItemInstance = new ItemInstance(this.scene, this.pBody, skill.id).itemInstance
             newItemInstance.timestamp = skill.timestamp

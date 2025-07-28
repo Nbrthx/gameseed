@@ -21,7 +21,68 @@ interface EnemyConfig {
     outfit: [boolean, string, string, string, string, string]
 }
 
-const enemyList: EnemyConfig[] = []
+const enemyList: EnemyConfig[] = [
+    {
+        "id": "enemy1",
+        "maxHealth": 60,
+        "speed": 2.8,
+        "visionDistance": 6,
+        "attackDistance": 2,
+        "zigzagDistance": 3.4,
+        "stopDistance": 1.4,
+        "attackSpeed": 1400,
+        "attackDelay": 300,
+        "weapon": "sword",
+        "xpReward": 1,
+        "itemReward": ["wood", 1],
+        "outfit": [true, "0xffaaaa", "basic", "basic", "basic", "basic"]
+    },
+    {
+        "id": "enemy2",
+        "maxHealth": 80,
+        "speed": 2.4,
+        "visionDistance": 6,
+        "attackDistance": 6,
+        "zigzagDistance": 7,
+        "stopDistance": 3.4,
+        "attackSpeed": 1400,
+        "attackDelay": 200,
+        "weapon": "bow",
+        "xpReward": 2,
+        "itemReward": ["wood", 2],
+        "outfit": [true, "0xffaaaa", "basic", "basic", "basic", "basic"]
+    },
+    {
+        "id": "enemy3",
+        "maxHealth": 100,
+        "speed": 3,
+        "visionDistance": 7,
+        "attackDistance": 7,
+        "zigzagDistance": 8,
+        "stopDistance": 5,
+        "attackSpeed": 500,
+        "attackDelay": 50,
+        "weapon": "blue-knife",
+        "xpReward": 4,
+        "itemReward": ["wood", 3],
+        "outfit": [true, "0xffaaaa", "basic", "basic", "basic", "basic"]
+    },
+    {
+        "id": "enemy4",
+        "maxHealth": 120,
+        "speed": 3.6,
+        "visionDistance": 7,
+        "attackDistance": 2.5,
+        "zigzagDistance": 5,
+        "stopDistance": 1.4,
+        "attackSpeed": 800,
+        "attackDelay": 20,
+        "weapon": "sword",
+        "xpReward": 8,
+        "itemReward": ["wood", 4],
+        "outfit": [true, "0xffaaaa", "basic", "basic", "basic", "basic"]
+    }
+]
 
 export class Enemy{
 
@@ -75,7 +136,7 @@ export class Enemy{
         this.health = this.maxHealth
 
         this.attackDir = new p.Vec2(0, 0)
-        this.itemInstance = new ItemInstance(scene, this.pBody).itemInstance
+        this.itemInstance = new ItemInstance(scene, this.pBody, this.config.weapon).itemInstance
         if(this.itemInstance instanceof MeleeWeapon){
             this.scene.addHitbox(this.itemInstance.hitbox, this.scene.entityBodys)
         }

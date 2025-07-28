@@ -12,7 +12,6 @@ import { Quests } from './components/Quests'
 export interface GameConfig{
     mapId: string
     isPvpAllowed: boolean,
-    requiredLevel: number,
     isDestroyable: boolean
 }
 
@@ -214,6 +213,7 @@ export class Game{
         const enterPos = this.mapSetup.enterpoint.get(from || 'spawn') || { x: 100, y: 100 }
 
         const player = new Player(this, enterPos.x, enterPos.y, uid, account)
+        player.equipItem(0)
 
         if(this.config.isPvpAllowed){
             player.isPvpProtected = true

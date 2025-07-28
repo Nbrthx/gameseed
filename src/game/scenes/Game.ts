@@ -8,6 +8,7 @@ import { Socket } from 'socket.io-client';
 import { GameState, NetworkHandler, OutputData } from '../components/NetworkHandler';
 import { SpatialAudio } from '../components/SpatialAudio';
 import { Projectile } from '../prefabs/items/RangeWeapon';
+import { Enemy } from '../prefabs/Enemy';
 
 export class Game extends Scene
 {
@@ -27,6 +28,7 @@ export class Game extends Scene
     player: Player;
     attackDir: p.Vec2 = new p.Vec2()
     others: Player[] = []
+    enemies: Enemy[] = []
     projectiles: Projectile[] = []
 
     realBodyPos: Map<p.Body, { x: number, y: number }> = new Map()
@@ -191,7 +193,11 @@ export class Game extends Scene
         this.player.update()
 
         this.others.forEach(other => {
-            other.update()
+            if(other.active) other.update()
+        })
+
+        this.enemies.forEach(enemy => {
+            if(enemy.active) enemy.update()
         })
     }
 }

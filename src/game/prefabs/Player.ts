@@ -173,15 +173,15 @@ export class Player extends Phaser.GameObjects.Container{
     }
 
     equipItem(index: number){
+        this.magicBook.activeIndex = index
         this.pBody.getWorld().queueUpdate(() => {
             const item = this.magicBook.skills[index]
 
             if(this.itemInstance){
                 const timestamp = item.timestamp
-                this.magicBook.setTimestamp(timestamp)
+                this.magicBook.setTimestamp(this.magicBook.activeIndex, timestamp)
                 this.itemInstance.destroy()
             }
-            this.magicBook.activeIndex = index
 
             const newItemInstance = new ItemInstance(this.scene, this.pBody, item.id).itemInstance
             newItemInstance.timestamp = item.timestamp

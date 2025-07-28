@@ -114,7 +114,7 @@ export class Enemy extends Phaser.GameObjects.Container{
         this.attackDir = new p.Vec2(0, 0)
         this.itemInstance = new ItemInstance(scene, this.pBody, this.config.weapon).itemInstance
 
-        this.sprite = scene.add.sprite(0, -100, 'male').setOrigin(0.5).setScale(scene.gameScale)
+        this.sprite = scene.add.sprite(0, -36, 'male').setOrigin(0.5).setScale(scene.gameScale)
         this.sprite.play('idle', true)
 
         // const [isMale, color, hair, face, body, leg] = this.config.outfit

@@ -179,15 +179,15 @@ export class MapSetup{
         })
         this.collision = []
 
-        // this.scene.others.forEach(v => {
-        //     v.destroy()
-        // })
-        // this.scene.others = []
+        this.scene.others.forEach(v => {
+            v.destroy()
+        })
+        this.scene.others = []
 
-        // this.scene.enemies.forEach(v => {
-        //     v.destroy()
-        // })
-        // this.scene.enemies = []
+        this.scene.enemies.forEach(v => {
+            v.destroy()
+        })
+        this.scene.enemies = []
 
         this.layers.forEach(v => {
             v.destroy()

@@ -48,6 +48,11 @@ export class Preloader extends Scene
         this.load.spritesheet('tree1', 'environment/tree1.png', { frameWidth: 96, frameHeight: 128 });
 
         this.load.tilemapTiledJSON('map1', 'environment/map1.json');
+        this.load.tilemapTiledJSON('map2', 'environment/map2.json');
+        this.load.tilemapTiledJSON('map3', 'environment/map3.json');
+        this.load.tilemapTiledJSON('map4', 'environment/map4.json');
+        this.load.tilemapTiledJSON('map5', 'environment/map5.json');
+        this.load.tilemapTiledJSON('duel', 'environment/duel.json');
 
         // Character
         this.load.image('shadow', 'char/shadow.png')

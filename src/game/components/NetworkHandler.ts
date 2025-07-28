@@ -4,6 +4,8 @@ import { Game } from "../scenes/Game"
 import { isMobile } from "../scenes/GameUI"
 import { Player } from "../prefabs/Player"
 import { Projectile, ProjectileConfig } from '../prefabs/items/RangeWeapon'
+import { MapSetup } from './MapSetup'
+import { Enemy } from '../prefabs/Enemy'
 
 export interface OutputData{
     uid: string,
@@ -75,6 +77,8 @@ export class NetworkHandler{
         this.socket.on('output', this.output.bind(this))
 
         this.socket.on('otherSkillUpdate', this.otherSkillUpdate.bind(this))
+
+        this.socket.on('changeWorld', this.changeWorld.bind(this))
     }
 
     joinGame(account: Account, others: {
@@ -97,6 +101,7 @@ export class NetworkHandler{
         console.log(account)
         if(account) this.isAuthed = true
 
+        scene.player.equipItem(0)
         // scene.player.syncData(account.health, account.inventory, 0, account.outfit)
 
         // scene.UI.setupUI(scene.player)
@@ -232,52 +237,52 @@ export class NetworkHandler{
             }
         })
 
-        // data.enemies.forEach(enemyData => {
-        //     const enemy = scene.enemies.find(v => v.uid == enemyData.uid)
-        //     if(enemy){
-        //         const targetPosition = new p.Vec2(enemyData.pos.x, enemyData.pos.y)
-        //         const currentPosition = enemy.pBody.getPosition()
+        data.enemies.forEach(enemyData => {
+            const enemy = scene.enemies.find(v => v.uid == enemyData.uid)
+            if(enemy){
+                const targetPosition = new p.Vec2(enemyData.pos.x, enemyData.pos.y)
+                const currentPosition = enemy.pBody.getPosition()
 
-        //         const normalized = targetPosition.clone().sub(currentPosition).add(new p.Vec2())
+                const normalized = targetPosition.clone().sub(currentPosition).add(new p.Vec2())
 
-        //         if(normalized.length() > 0.08) enemy.pBody.setLinearVelocity(normalized)
-        //         else enemy.pBody.setLinearVelocity(new p.Vec2(0, 0))
+                if(normalized.length() > 0.08) enemy.pBody.setLinearVelocity(normalized)
+                else enemy.pBody.setLinearVelocity(new p.Vec2(0, 0))
             
-        //         scene.realBodyPos.set(enemy.pBody, enemyData.pos)
+                scene.realBodyPos.set(enemy.pBody, enemyData.pos)
             
-        //         normalized.normalize()
+                normalized.normalize()
 
-        //         enemy.pBody.setPosition(currentPosition.add(targetPosition.sub(currentPosition).mul(0.2)))
-        //         enemy.attackDir = new p.Vec2(enemyData.attackDir.x, enemyData.attackDir.y)
+                enemy.pBody.setPosition(currentPosition.add(targetPosition.sub(currentPosition).mul(0.2)))
+                enemy.attackDir = new p.Vec2(enemyData.attackDir.x, enemyData.attackDir.y)
                 
-        //         if(enemy.health != enemyData.health){
-        //             if(enemy.health > enemyData.health){
-        //                 enemy.hitEffect()
-        //             }
-        //             enemy.health = enemyData.health
-        //         }
-        //         if(enemy.health <= 0){
-        //             scene.enemies.splice(scene.enemies.indexOf(enemy), 1)
-        //             enemy.destroy()
-        //             this.scene.add.particles(enemy.x, enemy.y, 'red-circle-particle', {
-        //                 color: [0xcc9999],
-        //                 lifespan: 500,
-        //                 speed: { min: 200, max: 300 },
-        //                 scale: { start: 4, end: 0 },
-        //                 gravityY: 500,
-        //                 emitting: false
-        //             }).explode(8)
-        //         }
-        //     }
+                if(enemy.health != enemyData.health){
+                    if(enemy.health > enemyData.health){
+                        enemy.hitEffect()
+                    }
+                    enemy.health = enemyData.health
+                }
+                if(enemy.health <= 0){
+                    scene.enemies.splice(scene.enemies.indexOf(enemy), 1)
+                    enemy.destroy()
+                    this.scene.add.particles(enemy.x, enemy.y, 'red-circle-particle', {
+                        color: [0xcc9999],
+                        lifespan: 500,
+                        speed: { min: 200, max: 300 },
+                        scale: { start: 4, end: 0 },
+                        gravityY: 500,
+                        emitting: false
+                    }).explode(8)
+                }
+            }
 
 
-        //     if(!enemy){
-        //         const newEnemy = new Enemy(scene, enemyData.pos.x*scene.gameScale*32, enemyData.pos.y*scene.gameScale*32, enemyData.id, enemyData.uid)
-        //         newEnemy.health = enemyData.health
-        //         newEnemy.barUpdate(newEnemy.damageBar)
-        //         this.scene.enemies.push(newEnemy)
-        //     }
-        // })
+            if(!enemy){
+                const newEnemy = new Enemy(scene, enemyData.pos.x*scene.gameScale*32, enemyData.pos.y*scene.gameScale*32, enemyData.id, enemyData.uid)
+                newEnemy.health = enemyData.health
+                newEnemy.barUpdate(newEnemy.damageBar)
+                this.scene.enemies.push(newEnemy)
+            }
+        })
 
         data.projectiles.forEach(projectileData => {
             const existProjectile = scene.projectiles.find(v => v.uid == projectileData.uid)
@@ -323,6 +328,38 @@ export class NetworkHandler{
         if(!other) return
 
         other.equipItem(index)
+    }
+
+    changeWorld(from: string | null, worldId: string, isPvpAllowed: boolean){
+        const scene = this.scene
+
+        if(isPvpAllowed){
+            scene.UI.alertBox.setAlert('Do you want to enter pvp zone?', true, () => {
+                scene.worldId = worldId
+                scene.mapSetup.destroy()
+                scene.mapSetup = new MapSetup(scene, worldId.split(':')[0])
+                
+                const enterPos = scene.mapSetup.enterpoint.get(from || 'spawn') || { x: 100, y: 100 }
+                
+                scene.camera.centerOn(enterPos.x, enterPos.y)
+                scene.player.pBody.setPosition(new p.Vec2(enterPos.x/scene.gameScale/32, enterPos.y/scene.gameScale/32))
+
+                scene.world.queueUpdate(() => scene.socket.emit('confirmChangeWorld'))
+            })
+        }
+        else{
+            scene.worldId = worldId
+            scene.mapSetup.destroy()
+            scene.mapSetup = new MapSetup(scene, worldId.split(':')[0])
+            
+            const enterPos = scene.mapSetup.enterpoint.get(from || 'spawn') || { x: 100, y: 100 }
+            
+            scene.camera.centerOn(enterPos.x, enterPos.y)
+            scene.player.pBody.setPosition(new p.Vec2(enterPos.x/scene.gameScale/32, enterPos.y/scene.gameScale/32))
+
+            scene.world.queueUpdate(() => scene.socket.emit('confirmChangeWorld'))
+        }
+
     }
 
     destroy(){

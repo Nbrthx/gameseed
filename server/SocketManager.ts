@@ -58,6 +58,8 @@ export class SocketManager {
 
         socket.on('changeSkill', this.changeSkill.bind(this, socket));
 
+        socket.on('confirmChangeWorld', this.confirmChangeWorld.bind(this, socket));
+
         socket.on('ping', (callback) => {
             callback()
         })
@@ -98,6 +100,22 @@ export class SocketManager {
 
         player.equipItem(index)
         socket.broadcast.to(player.scene.id).emit('otherSkillUpdate', socket.id, index)
+    }
+    
+    confirmChangeWorld(socket: Socket){
+        const player = this.getPlayer(socket.id)
+        if(!player) return
+
+        const worldId = this.gameManager.playerChangeWorld.get(socket.id)
+        if(!worldId) return
+
+        const world = this.gameManager.getWorld(worldId)
+        if(!world) return
+
+        player.scene.removePlayer(socket.id)
+        world.addPlayer(socket.id, player.account, player.scene.id.split(':')[0] == 'duel' ? 'spawn' : player.scene.id)
+
+        this.gameManager.playerChangeWorld.delete(socket.id)
     }
 
     // Not Listener

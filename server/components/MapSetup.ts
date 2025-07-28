@@ -124,10 +124,9 @@ export class MapSetup{
 
                 scene.world.queueUpdate(() => {
                     const isPvpAllowed = scene.gameManager.getWorld(o.name)?.config.isPvpAllowed || false
-                    const requiredLevel = scene.gameManager.getWorld(o.name)?.config.requiredLevel || 0
 
                     scene.gameManager.playerChangeWorld.set(player.uid, o.name)
-                    scene.gameManager.io.to(player.uid).emit('changeWorld', scene.id, o.name, isPvpAllowed, requiredLevel)
+                    scene.gameManager.io.to(player.uid).emit('changeWorld', scene.id, o.name, isPvpAllowed)
                 })
             })
         })

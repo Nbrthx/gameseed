@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { Socket } from "socket.io-client";
 import { Game } from "./Game";
 import { SkillUI } from "../prefabs/ui/SkillUI";
+import { AlertBoxUI } from "../prefabs/ui/AlertBoxUI";
 
 export const isMobile = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
@@ -21,6 +22,7 @@ export class GameUI extends Scene{
     debugText: Phaser.GameObjects.Text
 
     skillUI: SkillUI
+    alertBox: AlertBoxUI;
 
     constructor(){
         super('GameUI')
@@ -32,6 +34,10 @@ export class GameUI extends Scene{
         this.gameScene = this.scene.get('Game') as Game
 
         this.keyboardInput = {}
+
+        this.alertBox = new AlertBoxUI(this, this.scale.width/2, this.scale.height/2)
+        this.alertBox.setDepth(100)
+        this.alertBox.setVisible(false)
 
         this.debugText = this.add.text(100, 100, '', {
             fontFamily: 'PixelFont', fontSize: 24,

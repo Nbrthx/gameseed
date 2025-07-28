@@ -50,8 +50,10 @@ export class MagicBook{
         ]
     }
 
-    setTimestamp(timestamp: number){
-        this.skills[this.activeIndex].timestamp = timestamp
+    setTimestamp(index: number, timestamp: number){
+        if(index < 0 || index > 4) return
+
+        this.skills[index].timestamp = timestamp
     }
 
     refreshTimestamp(isUse: boolean = true){

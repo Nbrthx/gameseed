@@ -38,11 +38,21 @@ export class SkillUI extends Phaser.GameObjects.Container{
         for(let i=0; i<4; i++){
             const cooldownBox = scene.add.sprite(-392+i*32*4, -8, 'cooldown-anim')
             cooldownBox.setScale(4).setAlpha(0.6).setOrigin(1)
+
             this.cooldownBoxs.push(cooldownBox)
             this.add(cooldownBox)
         }
 
         this.add(this.border)
+
+        for(let i=0; i<4; i++){
+            const text = scene.add.text(-396+i*32*4, -12, `${i+1}`, {
+                fontFamily: 'PixelFont', fontSize: 32, color: '#ffffff',
+                stroke: '#000000', strokeThickness: 4
+            }).setOrigin(1)
+
+            this.add(text)
+        }
     }
 
     update(){
@@ -54,6 +64,10 @@ export class SkillUI extends Phaser.GameObjects.Container{
             const frameIndex = Math.floor(Math.max(Math.min((Date.now()-skill.timestamp)/instanceData.config.cooldown, 1), 0)*19)
             // console.log(item)
             this.cooldownBoxs[i].setFrame(frameIndex)
+        }
+        if(this.scene.gameScene.player.magicBook.activeIndex != this.activeIndex){
+            this.activeIndex = this.scene.gameScene.player.magicBook.activeIndex
+            this.border.setX(-392+this.activeIndex*32*4)
         }
     }
 
