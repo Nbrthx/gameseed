@@ -22,6 +22,7 @@ export interface Account{
         body: string
         leg: string
     }
+    magicBook: string
     classList: string[]
     questCompleted: string[]
     questInProgress?: [string, number[]]

@@ -27,9 +27,9 @@ export class Game extends Scene
 
     player: Player;
     attackDir: p.Vec2 = new p.Vec2()
-    others: Player[] = []
-    enemies: Enemy[] = []
-    projectiles: Projectile[] = []
+    others: Player[]
+    enemies: Enemy[]
+    projectiles: Projectile[]
 
     realBodyPos: Map<p.Body, { x: number, y: number }> = new Map()
 
@@ -62,6 +62,10 @@ export class Game extends Scene
         this.player.nameText.setColor('#66ffcc')
         this.camera.startFollow(this.player, true, 0.1, 0.1)
 
+        this.others = []
+        this.enemies = []
+        this.projectiles = []
+
         this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
             if(!this.player) return;
             if(isMobile()) return
@@ -90,10 +94,11 @@ export class Game extends Scene
         })
 
         this.lights.enable()
-        this.lights.setAmbientColor(0xeeffcc)
+        this.lights.setAmbientColor(0xccccdd)
 
         this.networkHandler = new NetworkHandler(this)
 
+        this.accumulator = 0
         this.previousTime = performance.now()
     }
 

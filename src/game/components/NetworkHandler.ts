@@ -44,6 +44,7 @@ interface Account{
         body: string
         leg: string
     }
+    magicBook: string
 }
 
 export class NetworkHandler{
@@ -106,14 +107,17 @@ export class NetworkHandler{
             body: string
             leg: string
         }
+        magicBook: string
     }[]){
         const scene = this.scene
         
         console.log(account)
         if(account) this.isAuthed = true
 
-        scene.player.equipItem(0)
         scene.player.health = account.health
+        scene.player.barUpdate(scene.player.damageBar)
+        scene.player.magicBook.changeBook(account.magicBook)
+        scene.player.equipItem(0)
         // scene.player.syncData(account.health, account.inventory, 0, account.outfit)
 
         scene.UI.setupUI(scene.player)
@@ -124,8 +128,10 @@ export class NetworkHandler{
 
             const other = new Player(scene, v.pos.x*scene.gameScale*32, v.pos.y*scene.gameScale*32, v.uid, v.username)
             // other.syncData(v.health, v.items, v.activeIndex, v.outfit)
-            other.equipItem(v.activeIndex)
             other.health = v.health
+            other.barUpdate(other.damageBar)
+            other.magicBook.changeBook(v.magicBook)
+            other.equipItem(v.activeIndex)
 
             scene.others.push(other)
         })

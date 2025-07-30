@@ -38,6 +38,11 @@ export class SkillUI extends Phaser.GameObjects.Container{
         for(let i=0; i<4; i++){
             const cooldownBox = scene.add.sprite(-392+i*32*4, -8, 'cooldown-anim')
             cooldownBox.setScale(4).setAlpha(0.6).setOrigin(1)
+            cooldownBox.setInteractive()
+            cooldownBox.on('pointerdown', () => {
+                this.activeIndex = i
+                this.changeBorder(i)
+            })
 
             this.cooldownBoxs.push(cooldownBox)
             this.add(cooldownBox)

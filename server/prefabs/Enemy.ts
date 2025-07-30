@@ -212,6 +212,7 @@ export class Enemy{
 
         if(this.attackDir.length() > 0){
             if(this.itemInstance){
+                this.itemInstance.timestamp = 0
                 this.itemInstance.use(this.attackDir.x, this.attackDir.y)
             }
 

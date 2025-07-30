@@ -126,6 +126,7 @@ export class SocketManager {
 
         player.magicBook.changeBook(id)
         player.equipItem(0)
+        player.account.magicBook = id
 
         socket.broadcast.to(player.scene.id).emit('otherBookUpdate', socket.id, id)
     }

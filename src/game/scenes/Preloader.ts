@@ -35,12 +35,21 @@ export class Preloader extends Scene
         this.load.spritesheet('punch', 'effect/punch.png', { frameWidth: 64, frameHeight: 64 })
         this.load.spritesheet('throw', 'effect/throw.png', { frameWidth: 64, frameHeight: 64 })
         this.load.spritesheet('sword', 'effect/sword.png', { frameWidth: 96, frameHeight: 96 })
+        this.load.spritesheet('sword2', 'effect/sword2.png', { frameWidth: 96, frameHeight: 96 })
+        this.load.spritesheet('sword3', 'effect/sword3.png', { frameWidth: 128, frameHeight: 128 })
         this.load.spritesheet('bow', 'effect/bow.png', { frameWidth: 64, frameHeight: 64 })
         this.load.spritesheet('dagger', 'effect/dagger.png', { frameWidth: 96, frameHeight: 64 })
+        this.load.spritesheet('fire-burst', 'effect/fire-burst.png', { frameWidth: 128, frameHeight: 128 })
+        this.load.spritesheet('fire-burst2', 'effect/fire-burst2.png', { frameWidth: 198, frameHeight: 32 })
+        this.load.spritesheet('healing', 'effect/healing.png', { frameWidth: 64, frameHeight: 64 })
 
+        this.load.spritesheet('bullet', 'effect/bullet.png', { frameWidth: 48, frameHeight: 16 })
         this.load.spritesheet('explode', 'effect/explode.png', { frameWidth: 64, frameHeight: 64 })
         this.load.spritesheet('arrow', 'effect/arrow.png', { frameWidth: 48, frameHeight: 16 })
+        this.load.spritesheet('big-arrow', 'effect/big-arrow.png', { frameWidth: 48, frameHeight: 16 })
         this.load.spritesheet('blue-knife', 'effect/blue-knife.png', { frameWidth: 32, frameHeight: 16 })
+        this.load.spritesheet('fireball', 'effect/fireball.png', { frameWidth: 32, frameHeight: 16 })
+        this.load.spritesheet('puller', 'effect/puller.png', { frameWidth: 32, frameHeight: 16 })
 
         // Environment
 
@@ -105,12 +114,32 @@ export class Preloader extends Scene
         })
         this.anims.create({
             key: 'throw-attack',
-            frames: this.anims.generateFrameNumbers('throw', { frames: [0, 0, 0, 0, 0, 0, 1, 2, 3, 4] }),
+            frames: this.anims.generateFrameNumbers('throw', { frames: [0, 0, 0, 0, 0, 1, 2, 3, 4] }),
             frameRate: 20
         })
         this.anims.create({
             key: 'sword-attack',
             frames: this.anims.generateFrameNumbers('sword', { frames: [0, 0, 0, 1, 2, 3, 4, 5, 5] }),
+            frameRate: 20
+        })
+        this.anims.create({
+            key: 'sword2-attack',
+            frames: this.anims.generateFrameNumbers('sword2', { frames: [0, 0, 0, 1, 2, 3, 4, 5, 5] }),
+            frameRate: 20
+        })
+        this.anims.create({
+            key: 'sword3-attack',
+            frames: this.anims.generateFrameNumbers('sword3', { frames: [0, 0, 0, 1, 2, 3, 4, 5, 5] }),
+            frameRate: 20
+        })
+        this.anims.create({
+            key: 'fire-burst-attack',
+            frames: this.anims.generateFrameNumbers('fire-burst', { frames: [0, 0, 0, 1, 2, 3, 4, 5, 5] }),
+            frameRate: 20
+        })
+        this.anims.create({
+            key: 'fire-burst2-attack',
+            frames: this.anims.generateFrameNumbers('fire-burst2', { frames: [0, 1, 2, 3, 4, 5, 5] }),
             frameRate: 20
         })
         this.anims.create({
@@ -123,6 +152,12 @@ export class Preloader extends Scene
             frames: this.anims.generateFrameNumbers('dagger', { frames: [0, 0, 0, 1, 1, 2, 3, 4, 5, 6, 7, 8] }),
             frameRate: 20
         })
+        this.anims.create({
+            key: 'healing-attack',
+            frames: this.anims.generateFrameNumbers('healing', { frames: [0, 1, 2, 3, 4, 5, 6] }),
+            frameRate: 20
+        })
+
         this.anims.create({
             key: 'explode',
             frames: this.anims.generateFrameNumbers('explode', { frames: [0, 1, 2, 3] }),

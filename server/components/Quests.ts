@@ -11,7 +11,7 @@ export interface QuestConfig{
     description: string
     taskInstruction: string // make it short
     task: Task[]
-    reward: { xp: number, item?: [string, number][], gold?: number }
+    reward: { book: string }
     repeatable?: true
 }
 
@@ -24,7 +24,7 @@ const quests: QuestConfig[] = [
         description: 'The Swordman is in the forest. Defeat him and get a sword.',
         taskInstruction: 'Defeat the Swordman',
         task: [{ type: 'kill', target: 'enemy1', amount: 1 }],
-        reward: { xp: 3, item: [['sword', 1]] }
+        reward: { book: 'warrior' }
     },
     {
         id: 'quest2',
@@ -33,7 +33,7 @@ const quests: QuestConfig[] = [
         description: 'The Archer is in the forest. Defeat him and get a bow.',
         taskInstruction: 'Defeat the Archer',
         task: [{ type: 'kill', target: 'enemy2', amount: 2  }],
-        reward: { xp: 6, item: [['bow', 1]] }
+        reward: { book: 'archer' }
     },
     {
         id: 'quest3',
@@ -42,7 +42,7 @@ const quests: QuestConfig[] = [
         description: 'The Ninja is in the forest. Defeat him and collect for me some wood. You will get some blue knife.',
         taskInstruction: 'Defeat the Ninja',
         task: [{ type: 'kill', target: 'enemy3', amount: 3  }],
-        reward: { xp: 12, item: [['blue-knife', 1]] }
+        reward: { book: 'archer' }
     },
     {
         id: 'quest4',
@@ -51,7 +51,7 @@ const quests: QuestConfig[] = [
         description: 'The Assasin is in the forest. Defeat him and collect for me some wood. You will get some dagger.',
         taskInstruction: 'Defeat the Assasin',
         task: [{ type: 'kill', target: 'enemy4', amount: 4  }],
-        reward: { xp: 24, item: [['dagger', 1]] }
+        reward: { book: 'archer' }
     },
     {
         id: 'quest5',
@@ -60,7 +60,7 @@ const quests: QuestConfig[] = [
         description: 'The Swordman is in the forest. Defeat him and collect for me some wood. You will get a more sword.',
         taskInstruction: 'Defeat the Swordman',
         task: [{ type: 'kill', target: 'enemy1', amount: 1 }],
-        reward: { xp: 6, item: [['sword', 1]] },
+        reward: { book: 'archer' },
         repeatable: true
     },
     {
@@ -70,7 +70,7 @@ const quests: QuestConfig[] = [
         description: 'The Archer and The Swordman is in the forest. Defeat them and collect for me some wood. You will get a more bow.',
         taskInstruction: 'Defeat the Archer',
         task: [{ type: 'kill', target: 'enemy1', amount: 3 }, { type: 'kill', target: 'enemy2', amount: 1 }],
-        reward: { xp: 12, item: [['bow', 1]] },
+        reward: { book: 'archer' },
         repeatable: true
     },
     {
@@ -80,7 +80,7 @@ const quests: QuestConfig[] = [
         description: 'The Ninja, The Archer and The Swordman is in the forest. Defeat them and collect for me some wood. You will get a more blue knife.',
         taskInstruction: 'Defeat the Ninja',
         task: [{ type: 'kill', target: 'enemy1', amount: 3 }, { type: 'kill', target: 'enemy2', amount: 2 }, { type: 'kill', target: 'enemy3', amount: 1 }],
-        reward: { xp: 24, item: [['blue-knife', 1]] },
+        reward: { book: 'archer' },
         repeatable: true
     },
     {
@@ -90,7 +90,7 @@ const quests: QuestConfig[] = [
         description: 'All types of enemies is in the forest. Defeat them and collect for me some wood. You will get a more dagger.',
         taskInstruction: 'Defeat the Assasin',
         task: [{ type: 'kill', target: 'enemy1', amount: 5 }, { type: 'kill', target: 'enemy2', amount: 3 }, { type: 'kill', target: 'enemy2', amount: 1 }, { type: 'kill', target: 'enemy4', amount: 1 }],
-        reward: { xp: 48, item: [['dagger', 1]] },
+        reward: { book: 'archer' },
         repeatable: true
     }
 ]

@@ -2,13 +2,26 @@ import * as p from "planck";
 import { Game } from "../../GameWorld";
 import { BaseItem } from "../BaseItem";
 
+interface Hitbox{
+    shape: 'box'
+    width: number
+    height: number
+}
+
+interface Hitcircle{
+    shape: 'circle'
+    radius: number
+}
+
+interface Hitpolygon{
+    shape: 'polygon'
+    vertices: { x: number, y: number }[]
+}
+
 export interface Melee{
     texture: string
     offsetMultipler: number
-    hitboxSize: {
-        width: number
-        height: number
-    }
+    hitbox: Hitbox | Hitcircle | Hitpolygon
     hitboxOffsetMultipler: number
     cooldown: number
     attackDelay: number
@@ -36,8 +49,13 @@ export class MeleeWeapon extends BaseItem{
         this.attackState = false
 
         this.hitbox = scene.world.createKinematicBody();
+
+        const hitboxShape = config.hitbox.shape === 'polygon' ? new p.Polygon(config.hitbox.vertices) :
+            config.hitbox.shape === 'circle' ? new p.Circle(new p.Vec2(0, 0), config.hitbox.radius) :
+            new p.Box(config.hitbox.width, config.hitbox.height)
+
         this.hitbox.createFixture({
-            shape: new p.Box(config.hitboxSize.width, config.hitboxSize.height, new p.Vec2(0, 0)),
+            shape: hitboxShape,
             isSensor: true
         })
         this.hitbox.setActive(false); // Nonaktifkan awal

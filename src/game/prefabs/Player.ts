@@ -72,6 +72,7 @@ export class Player extends Phaser.GameObjects.Container{
 
         this.sprite = scene.add.sprite(0, -36, 'player').setOrigin(0.5, 0.5).setScale(scene.gameScale)
         this.sprite.play('idle', true)
+        this.sprite.setPipeline('Light2D')
 
         this.itemIcon = scene.add.image(56, 0, '').setOrigin(0.5, 0.5)
         this.itemIcon.setScale(3)

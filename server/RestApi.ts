@@ -30,6 +30,7 @@ export class RestApi{
                     body: 'basic',
                     leg: 'basic'
                 },
+                magicBook: 'warrior',
                 classList: [],
                 questCompleted: []
             })

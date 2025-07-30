@@ -3,6 +3,7 @@ import { Game } from "../scenes/Game";
 import { BaseItem } from "./BaseItem";
 import { MeleeWeapon, Melee } from "./items/MeleeWeapon";
 import { RangeWeapon, Range } from "./items/RangeWeapon";
+import { Boost, Booster } from './items/Booster';
 
 interface MeleeItem {
     id: string
@@ -16,9 +17,15 @@ interface RangeItem {
     config: Range
 }
 
-export type ItemData = MeleeItem | RangeItem
+interface BoostItem {
+    id: string
+    type: 'boost'
+    config: Boost
+}
 
-export type BaseItemConfig = Melee | Range;
+export type ItemData = MeleeItem | RangeItem | BoostItem;
+
+export type BaseItemConfig = Melee | Range | Boost;
 
 export const itemList: ItemData[] = [
     {
@@ -27,11 +34,30 @@ export const itemList: ItemData[] = [
         "config": {
             "texture": "punch",
             "offsetMultipler": 1,
-            "hitboxSize": {
+            "hitbox": {
+                "shape": "box",
                 "width": 0.7,
                 "height": 0.2
             },
             "hitboxOffsetMultipler": 1.1,
+            "cooldown": 500,
+            "attackDelay": 100,
+            "canMove": true
+        }
+    },
+    {
+        "id": "shot",
+        "type": "range",
+        "config": {
+            "texture": "throw",
+            "projectileTexture": "bullet",
+            "spriteOffsetMultipler": 0.9,
+            "hitboxSize": {
+                "width": 0.2,
+                "height": 0.2
+            },
+            "speed": 20,
+            "range": 5,
             "cooldown": 500,
             "attackDelay": 100,
             "canMove": true
@@ -43,13 +69,84 @@ export const itemList: ItemData[] = [
         "config": {
             "texture": "sword",
             "offsetMultipler": 0.5,
-            "hitboxSize": {
+            "hitbox": {
+                "shape": "box",
                 "width": 0.8,
                 "height": 0.7
             },
             "hitboxOffsetMultipler": 0.9,
-            "cooldown": 800,
+            "cooldown": 1600,
             "attackDelay": 200,
+            "canMove": true
+        }
+    },
+    {
+        "id": "sword2",
+        "type": "melee",
+        "config": {
+            "texture": "sword2",
+            "offsetMultipler": 1,
+            "hitbox": {
+                "shape": "box",
+                "width": 1.1,
+                "height": 0.6
+            },
+            "hitboxOffsetMultipler": 1.2,
+            "cooldown": 3000,
+            "attackDelay": 200,
+            "canMove": true
+        }
+    },
+    {
+        "id": "sword3",
+        "type": "melee",
+        "config": {
+            "texture": "sword3",
+            "offsetMultipler": 0,
+            "hitbox": {
+                "shape": "circle",
+                "radius": 1.8
+            },
+            "hitboxOffsetMultipler": 0,
+            "cooldown": 2000,
+            "attackDelay": 200,
+            "canMove": true
+        }
+    },
+    {
+        "id": "fire-burst",
+        "type": "melee",
+        "config": {
+            "texture": "fire-burst",
+            "offsetMultipler": 2,
+            "hitbox": {
+                "shape": "polygon",
+                "vertices": [
+                    { "x": -2, "y": 0 },
+                    { "x": 1.2, "y": 1.5 },
+                    { "x": 1.2, "y": -1.5 },
+                ]
+            },
+            "hitboxOffsetMultipler": 2.4,
+            "cooldown": 4000,
+            "attackDelay": 200,
+            "canMove": false
+        }
+    },
+    {
+        "id": "fire-burst2",
+        "type": "melee",
+        "config": {
+            "texture": "fire-burst2",
+            "offsetMultipler": 3.6,
+            "hitbox": {
+                "shape": "box",
+                "width": 3,
+                "height": 0.5
+            },
+            "hitboxOffsetMultipler": 3.6,
+            "cooldown": 10000,
+            "attackDelay": 0,
             "canMove": true
         }
     },
@@ -66,7 +163,25 @@ export const itemList: ItemData[] = [
             },
             "speed": 30,
             "range": 6,
-            "cooldown": 1400,
+            "cooldown": 2000,
+            "attackDelay": 200,
+            "canMove": false
+        }
+    },
+    {
+        "id": "bow2",
+        "type": "range",
+        "config": {
+            "texture": "bow",
+            "projectileTexture": "big-arrow",
+            "spriteOffsetMultipler": 0.8,
+            "hitboxSize": {
+                "width": 0.4,
+                "height": 0.2
+            },
+            "speed": 30,
+            "range": 6,
+            "cooldown": 8000,
             "attackDelay": 200,
             "canMove": false
         }
@@ -77,12 +192,13 @@ export const itemList: ItemData[] = [
         "config": {
             "texture": "dagger",
             "offsetMultipler": 0.2,
-            "hitboxSize": {
+            "hitbox": {
+                "shape": "box",
                 "width": 1.4,
                 "height": 0.4
             },
             "hitboxOffsetMultipler": 0.4,
-            "cooldown": 3000,
+            "cooldown": 7000,
             "attackDelay": 300,
             "canMove": false
         }
@@ -100,9 +216,69 @@ export const itemList: ItemData[] = [
             },
             "speed": 10,
             "range": 8,
-            "cooldown": 400,
-            "attackDelay": 300,
+            "cooldown": 500,
+            "attackDelay": 200,
             "canMove": true
+        }
+    },
+    {
+        "id": "fireball",
+        "type": "range",
+        "config": {
+            "texture": "throw",
+            "projectileTexture": "fireball",
+            "spriteOffsetMultipler": 0.9,
+            "hitboxSize": {
+                "width": 0.2,
+                "height": 0.2
+            },
+            "speed": 15,
+            "range": 7,
+            "cooldown": 2000,
+            "attackDelay": 100,
+            "canMove": true
+        }
+    },
+    {
+        "id": "puller",
+        "type": "range",
+        "config": {
+            "texture": "throw",
+            "projectileTexture": "puller",
+            "spriteOffsetMultipler": 0.9,
+            "hitboxSize": {
+                "width": 0.2,
+                "height": 0.2
+            },
+            "speed": 15,
+            "range": 7,
+            "cooldown": 8000,
+            "attackDelay": 100,
+            "canMove": true
+        }
+    },
+    {
+        "id": "healing",
+        "type": "boost",
+        "config": {
+            "texture": "healing",
+            "effect": {
+                "effect": "heal",
+                "amount": 8
+            },
+            "cooldown": 4000,
+        }
+    },
+    {
+        "id": "healing2",
+        "type": "boost",
+        "config": {
+            "texture": "healing",
+            "effect": {
+                "effect": "heal",
+                "amount": 16
+            },
+            "cooldown": 6000,
         }
     }
 ]
@@ -126,6 +302,9 @@ export class ItemInstance{
             }
             else if(item.type === 'range'){
                 this.itemInstance = new RangeWeapon(this.scene, this.parentBody, item.config);
+            }
+            else if(item.type === 'boost'){
+                this.itemInstance = new Booster(this.scene, this.parentBody, item.config);
             }
             else{
                 this.itemInstance = new MeleeWeapon(this.scene, this.parentBody, defaultConfig);

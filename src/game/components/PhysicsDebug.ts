@@ -20,7 +20,7 @@ export function createDebugGraphics(scene: Game, debugGraphics: Phaser.GameObjec
         for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
             const shape = fixture.getShape();
 
-            if (shape instanceof p.Box) {
+            if (shape instanceof p.Box || shape instanceof p.Polygon) {
                 const vertices = shape.m_vertices
 
                 const transformedVertices = vertices.map(v => {
@@ -52,6 +52,7 @@ export function createDebugGraphics(scene: Game, debugGraphics: Phaser.GameObjec
                 debugGraphics.strokeCircle(center.x * scene.gameScale * 32, center.y * scene.gameScale * 32, shape.m_radius * scene.gameScale * 32)
                 debugGraphics.strokeCircle(center.x * scene.gameScale * 32, center.y * scene.gameScale * 32, 8)
             }
+
         }
     }
 }

@@ -225,6 +225,7 @@ export class Game{
         const enterPos = this.mapSetup.enterpoint.get(from || 'spawn') || { x: 100, y: 100 }
 
         const player = new Player(this, enterPos.x, enterPos.y, uid, account)
+        player.magicBook.changeBook(account.magicBook)
         player.equipItem(0)
 
         if(this.config.isPvpAllowed){
@@ -269,7 +270,8 @@ export class Game{
                 pos: v.pBody.getPosition(),
                 activeIndex: v.magicBook.activeIndex,
                 health: v.health,
-                outfit: v.outfit
+                outfit: v.outfit,
+                magicBook: v.magicBook.id
             }
         }))
         socket?.broadcast.to(this.id).emit('playerJoined', {

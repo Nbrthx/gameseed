@@ -8,8 +8,11 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+serverjs
 dist
 dist-ssr
+serverjs.tar.gz
+dist.tar.gz
 *.local
 
 # Editor directories and files
