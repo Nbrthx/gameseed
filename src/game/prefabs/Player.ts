@@ -5,13 +5,15 @@ import { ItemInstance } from './ItemInstance'
 import { SpatialSound } from '../components/SpatialAudio'
 import { TextBox } from './TextBox'
 import { MagicBook } from './MagicBook'
+import { MeleeWeapon } from './items/MeleeWeapon'
+import { RangeWeapon } from './items/RangeWeapon'
 
 export class Player extends Phaser.GameObjects.Container{
 
     uid: string
     maxHealth: number
     health: number
-    speed = 4.2
+    speed = 3.6
 
     scene: Game
     magicBook: MagicBook
@@ -31,7 +33,7 @@ export class Player extends Phaser.GameObjects.Container{
     pBody: p.Body
     attackDir: p.Vec2
     textbox: TextBox
-    aimAssist: Phaser.GameObjects.Rectangle
+    aimAssist: Phaser.GameObjects.Graphics
     itemIcon: Phaser.GameObjects.Image
 
     constructor(scene: Game, x: number, y: number, uid: string, username: string){
@@ -80,8 +82,11 @@ export class Player extends Phaser.GameObjects.Container{
         this.itemIcon.setRotation(Math.PI/8)
         this.itemIcon.setVisible(false)
 
-        this.aimAssist = scene.add.rectangle(0,12, 96, 24, 0xffffff, 0.5)
-        this.aimAssist.setOrigin(-1.5, 0.5).setVisible(false).setRounded(8)
+        // this.aimAssist = scene.add.rectangle(0,12, 96, 24, 0xffffff, 0.5)
+        // this.aimAssist.setOrigin(-1.5, 0.5).setVisible(false).setRounded(8)
+
+        this.aimAssist = scene.add.graphics()
+        this.aimAssist.y = 14
         
         const shadow = scene.add.image(0, 19*scene.gameScale, 'shadow').setAlpha(0.4).setScale(scene.gameScale)
 
@@ -132,8 +137,54 @@ export class Player extends Phaser.GameObjects.Container{
         this.setDepth(this.y/this.scene.gameScale)
 
         const isReady = this.itemInstance.timestamp+this.itemInstance.config.cooldown < Date.now()
-        if(this.aimAssist.visible && isReady) this.aimAssist.setFillStyle(0xffffff, 0.5)
-        else if(this.aimAssist.visible) this.aimAssist.setFillStyle(0xcc3333, 0.4)
+
+        if(this.itemInstance instanceof MeleeWeapon){
+            const offsetMultipler = this.itemInstance.config.hitboxOffsetMultipler
+            const size = this.itemInstance.config.hitbox;
+            this.aimAssist.clear();
+            this.aimAssist.fillStyle(isReady ? 0xffffff : 0x880000, isReady ? 0.3 : 0.15);
+            if (size.shape === 'box') {
+                this.aimAssist.fillRect(
+                    (-size.width+offsetMultipler) * this.scene.gameScale * 32,
+                    -size.height * this.scene.gameScale * 32,
+                    size.width*2 * this.scene.gameScale * 32,
+                    size.height*2 * this.scene.gameScale * 32
+                );
+            } else if (size.shape === 'circle') {
+                this.aimAssist.fillCircle(
+                    offsetMultipler * this.scene.gameScale * 32,
+                    0,
+                    size.radius * this.scene.gameScale * 32
+                );
+            } else if (size.shape === 'polygon') {
+                this.aimAssist.beginPath();
+                size.vertices.forEach((vertex, index) => {
+                    const x = (vertex.x+offsetMultipler) * this.scene.gameScale * 32;
+                    const y = vertex.y * this.scene.gameScale * 32;
+                    if (index === 0) {
+                        this.aimAssist.moveTo(x, y);
+                    } else {
+                        this.aimAssist.lineTo(x, y);
+                    }
+                });
+                this.aimAssist.closePath();
+                this.aimAssist.fillPath();
+            }
+        }
+        else if(this.itemInstance instanceof RangeWeapon){
+            const spriteOffsetMultipler = this.itemInstance.config.spriteOffsetMultipler
+            const range = this.itemInstance.config.range;
+            const hitboxSize = this.itemInstance.config.hitboxSize;
+            this.aimAssist.clear();
+            this.aimAssist.fillStyle(isReady ? 0xffff88 : 0x880000, isReady ? 0.3 : 0.15);
+            this.aimAssist.fillRect(
+                spriteOffsetMultipler * this.scene.gameScale * 32,
+                -hitboxSize.height * this.scene.gameScale * 32,
+                range * this.scene.gameScale * 32,
+                hitboxSize.height * 2 * this.scene.gameScale * 32
+            );
+        }
+        else this.aimAssist.clear()
 
         this.x = this.pBody.getPosition().x*this.scene.gameScale*32
         this.y = this.pBody.getPosition().y*this.scene.gameScale*32

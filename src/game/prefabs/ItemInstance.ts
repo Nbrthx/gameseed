@@ -59,7 +59,7 @@ export const itemList: ItemData[] = [
             "speed": 20,
             "range": 5,
             "cooldown": 500,
-            "attackDelay": 100,
+            "attackDelay": 0,
             "canMove": true
         }
     },
@@ -75,7 +75,7 @@ export const itemList: ItemData[] = [
                 "height": 0.7
             },
             "hitboxOffsetMultipler": 0.9,
-            "cooldown": 1600,
+            "cooldown": 2000,
             "attackDelay": 200,
             "canMove": true
         }
@@ -108,7 +108,7 @@ export const itemList: ItemData[] = [
                 "radius": 1.8
             },
             "hitboxOffsetMultipler": 0,
-            "cooldown": 2000,
+            "cooldown": 2500,
             "attackDelay": 200,
             "canMove": true
         }
@@ -164,7 +164,7 @@ export const itemList: ItemData[] = [
             "speed": 30,
             "range": 6,
             "cooldown": 2000,
-            "attackDelay": 200,
+            "attackDelay": 100,
             "canMove": false
         }
     },
@@ -182,7 +182,7 @@ export const itemList: ItemData[] = [
             "speed": 30,
             "range": 6,
             "cooldown": 8000,
-            "attackDelay": 200,
+            "attackDelay": 100,
             "canMove": false
         }
     },
@@ -217,7 +217,7 @@ export const itemList: ItemData[] = [
             "speed": 10,
             "range": 8,
             "cooldown": 500,
-            "attackDelay": 200,
+            "attackDelay": 100,
             "canMove": true
         }
     },
@@ -235,7 +235,7 @@ export const itemList: ItemData[] = [
             "speed": 15,
             "range": 7,
             "cooldown": 2000,
-            "attackDelay": 100,
+            "attackDelay": 0,
             "canMove": true
         }
     },

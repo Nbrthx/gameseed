@@ -37,8 +37,13 @@ export class MainMenu extends Scene {
 
         const inputname = this.add.dom(this.scale.width/2, this.scale.height/2).createFromCache('inputname')
         const submitBtn = inputname.getChildByID('submit') as HTMLButtonElement
+
+        let isLoading = false
+
         submitBtn.addEventListener('click', () => {
             const username = inputname.getChildByID('username') as HTMLInputElement
+            if(isLoading) return
+            isLoading = true
             
             if(!username.value) return
 
@@ -50,6 +55,7 @@ export class MainMenu extends Scene {
                         this.registry.set('socket', socket)
                         this.registry.set('username', username.value)
                         start()
+                        isLoading = false
                     })
                 })
             }
@@ -59,6 +65,7 @@ export class MainMenu extends Scene {
                     inputname.setVisible(false)
                     this.registry.set('username', username.value)
                     start()
+                    isLoading = false
                 })
             }
         })

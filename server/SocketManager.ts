@@ -98,7 +98,7 @@ export class SocketManager {
     changeSkill(socket: Socket, index: number){
         const player = this.getPlayer(socket.id)
         if(!player) return
-        if(index < 0 || index > 4) return
+        if(index < 0 || index > 3) return
 
         player.equipItem(index)
         socket.broadcast.to(player.scene.id).emit('otherSkillUpdate', socket.id, index)

@@ -11,7 +11,7 @@ export class SkillUI extends Phaser.GameObjects.Container{
     cooldownBoxs: Phaser.GameObjects.Sprite[] = []
 
     constructor(scene: GameUI){
-        super(scene, scene.scale.width/2+260, scene.scale.height-16)
+        super(scene, scene.scale.width/2+196, scene.scale.height-16)
 
         this.scene = scene
         scene.add.existing(this)
@@ -19,7 +19,7 @@ export class SkillUI extends Phaser.GameObjects.Container{
         const bg = scene.add.image(0, 0, 'ui-skills')
         bg.setScale(4).setOrigin(1).setAlpha(0.8)
 
-        this.border = scene.add.image(-392, -8, 'ui-selected-skill')
+        this.border = scene.add.image(-264, -8, 'ui-selected-skill')
         this.border.setScale(4).setOrigin(1)
 
         scene.tweens.add({
@@ -35,8 +35,8 @@ export class SkillUI extends Phaser.GameObjects.Container{
         
         this.add(bg)
 
-        for(let i=0; i<4; i++){
-            const cooldownBox = scene.add.sprite(-392+i*32*4, -8, 'cooldown-anim')
+        for(let i=0; i<3; i++){
+            const cooldownBox = scene.add.sprite(-264+i*32*4, -8, 'cooldown-anim')
             cooldownBox.setScale(4).setAlpha(0.6).setOrigin(1)
             cooldownBox.setInteractive()
             cooldownBox.on('pointerdown', () => {
@@ -50,8 +50,8 @@ export class SkillUI extends Phaser.GameObjects.Container{
 
         this.add(this.border)
 
-        for(let i=0; i<4; i++){
-            const text = scene.add.text(-396+i*32*4, -12, `${i+1}`, {
+        for(let i=0; i<3; i++){
+            const text = scene.add.text(-264+i*32*4, -12, `${i+1}`, {
                 fontFamily: 'PixelFont', fontSize: 32, color: '#ffffff',
                 stroke: '#000000', strokeThickness: 4
             }).setOrigin(1)
@@ -61,7 +61,7 @@ export class SkillUI extends Phaser.GameObjects.Container{
     }
 
     update(){
-        for(let i=0; i<4; i++){
+        for(let i=0; i<3; i++){
             const skill = this.scene.gameScene.player.magicBook.skills[i]
 
             const instanceData = itemList.find(v => v.id === skill.id) || itemList[0]
@@ -72,7 +72,7 @@ export class SkillUI extends Phaser.GameObjects.Container{
         }
         if(this.scene.gameScene.player.magicBook.activeIndex != this.activeIndex){
             this.activeIndex = this.scene.gameScene.player.magicBook.activeIndex
-            this.border.setX(-392+this.activeIndex*32*4)
+            this.border.setX(-264+this.activeIndex*32*4)
         }
     }
 
@@ -83,9 +83,9 @@ export class SkillUI extends Phaser.GameObjects.Container{
             if(pointer.event.defaultPrevented) return
 
             if (deltaY > 0) {
-                this.activeIndex = (this.activeIndex + 1) % 4;
+                this.activeIndex = (this.activeIndex + 1) % 3;
             } else if (deltaY < 0) {
-                this.activeIndex = (this.activeIndex - 1 + 4) % 4;
+                this.activeIndex = (this.activeIndex - 1 + 3) % 3;
             }
 
             this.changeBorder(this.activeIndex)
@@ -98,8 +98,6 @@ export class SkillUI extends Phaser.GameObjects.Container{
                 index = 1
             } else if (event.key === '3') {
                 index = 2
-            } else if (event.key === '4') {
-                index = 3
             }
 
             if(index != this.activeIndex){
@@ -110,7 +108,7 @@ export class SkillUI extends Phaser.GameObjects.Container{
     }
 
     changeBorder(index: number){
-        this.border.setX(-392+index*32*4)
+        this.border.setX(-264+index*32*4)
 
         this.scene.gameScene.player.equipItem(index)
         this.scene.socket.emit('changeSkill', index)
