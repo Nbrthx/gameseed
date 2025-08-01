@@ -26,6 +26,10 @@ export interface Melee{
     hitboxOffsetMultipler: number
     cooldown: number
     attackDelay: number
+    damage: number
+    knockback: number
+    force: number
+    forceDelay: number
     canMove: boolean
 }
 

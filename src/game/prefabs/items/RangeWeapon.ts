@@ -6,6 +6,7 @@ import { SpatialSound } from "../../components/SpatialAudio";
 export interface Range{
     texture: string
     projectileTexture: string
+    offsetMultipler: number
     spriteOffsetMultipler: number
     speed: number
     range: number
@@ -15,7 +16,12 @@ export interface Range{
     }
     cooldown: number
     attackDelay: number
+    damage: number
+    knockback: number
+    force: number
+    forceDelay: number
     canMove: boolean
+    isPenetrating: boolean
 }
 
 export class RangeWeapon extends BaseItem{

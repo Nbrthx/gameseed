@@ -8,8 +8,8 @@ export class SkillUI extends Phaser.GameObjects.Container{
     activeIndex: number = 0
 
     border: Phaser.GameObjects.Image
-    cooldownBoxs: Phaser.GameObjects.Sprite[] = []
-
+    cooldownBoxs: Phaser.GameObjects.Sprite[]
+    icons: Phaser.GameObjects.Image[]
     constructor(scene: GameUI){
         super(scene, scene.scale.width/2+196, scene.scale.height-16)
 
@@ -35,6 +35,9 @@ export class SkillUI extends Phaser.GameObjects.Container{
         
         this.add(bg)
 
+        this.cooldownBoxs = []
+        this.icons = []
+
         for(let i=0; i<3; i++){
             const cooldownBox = scene.add.sprite(-264+i*32*4, -8, 'cooldown-anim')
             cooldownBox.setScale(4).setAlpha(0.6).setOrigin(1)
@@ -43,6 +46,11 @@ export class SkillUI extends Phaser.GameObjects.Container{
                 this.activeIndex = i
                 this.changeBorder(i)
             })
+
+            const icon = scene.add.image(-280+i*32*4, -24, 'icon-punch')
+            icon.setScale(4).setOrigin(1)
+            this.icons.push(icon)
+            this.add(icon)
 
             this.cooldownBoxs.push(cooldownBox)
             this.add(cooldownBox)
@@ -69,6 +77,9 @@ export class SkillUI extends Phaser.GameObjects.Container{
             const frameIndex = Math.floor(Math.max(Math.min((Date.now()-skill.timestamp)/instanceData.config.cooldown, 1), 0)*19)
             // console.log(item)
             this.cooldownBoxs[i].setFrame(frameIndex)
+
+            const icon = this.icons[i]
+            icon.setTexture(`icon-${instanceData.id}`)
         }
         if(this.scene.gameScene.player.magicBook.activeIndex != this.activeIndex){
             this.activeIndex = this.scene.gameScene.player.magicBook.activeIndex

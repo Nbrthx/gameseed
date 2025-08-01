@@ -52,7 +52,7 @@ export const itemList: Item[] = [
         "type": "range",
         "config": {
             "texture": "throw",
-            "projectileTexture": "bullet",
+            "projectileTexture": "shot",
             "spriteOffsetMultipler": 0.9,
             "offsetMultipler": 0.8,
             "hitboxSize": {
@@ -107,8 +107,8 @@ export const itemList: Item[] = [
             "cooldown": 3000,
             "attackDelay": 200,
             "damage": 5.5,
-            "knockback": 18,
-            "force": 14,
+            "knockback": 22,
+            "force": -10,
             "forceDelay": 100,
             "canMove": true
         }
@@ -126,9 +126,9 @@ export const itemList: Item[] = [
             "hitboxOffsetMultipler": 0,
             "cooldown": 2500,
             "attackDelay": 200,
-            "damage": 5,
+            "damage": 4.5,
             "knockback": -8,
-            "force": 18,
+            "force": 16,
             "forceDelay": 0,
             "canMove": true
         }
@@ -169,7 +169,7 @@ export const itemList: Item[] = [
                 "height": 0.5
             },
             "hitboxOffsetMultipler": 3.6,
-            "cooldown": 10000,
+            "cooldown": 11000,
             "attackDelay": 0,
             "damage": 12,
             "knockback": 26,
@@ -316,7 +316,7 @@ export const itemList: Item[] = [
             "knockback": -16,
             "force": -4,
             "forceDelay": 100,
-            "isPenetrating": false,
+            "isPenetrating": true,
             "canMove": true
         }
     },

@@ -181,7 +181,7 @@ export class Enemy{
 
             if(this.pBody.getLinearVelocity().length() > 0.1){
                 let wallDir = new p.Vec2(0, 0)
-                let minDist = 2
+                let minDist = 1.4
                 for(let collision of this.scene.mapSetup.collision){
                     const bodySize = collision.getUserData() as { width: number, height: number } | undefined
                     const corners = [[0, 0], [0, bodySize?.height || 0], [bodySize?.width || 0, 0], [bodySize?.width || 0, bodySize?.height || 0]]

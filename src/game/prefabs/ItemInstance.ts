@@ -42,6 +42,10 @@ export const itemList: ItemData[] = [
             "hitboxOffsetMultipler": 1.1,
             "cooldown": 500,
             "attackDelay": 100,
+            "damage": 2.5,
+            "knockback": 15,
+            "force": 6,
+            "forceDelay": 0,
             "canMove": true
         }
     },
@@ -50,8 +54,9 @@ export const itemList: ItemData[] = [
         "type": "range",
         "config": {
             "texture": "throw",
-            "projectileTexture": "bullet",
+            "projectileTexture": "shot",
             "spriteOffsetMultipler": 0.9,
+            "offsetMultipler": 0.8,
             "hitboxSize": {
                 "width": 0.2,
                 "height": 0.2
@@ -60,6 +65,11 @@ export const itemList: ItemData[] = [
             "range": 5,
             "cooldown": 500,
             "attackDelay": 0,
+            "damage": 2,
+            "knockback": 8,
+            "force": -4,
+            "forceDelay": 0,
+            "isPenetrating": false,
             "canMove": true
         }
     },
@@ -77,6 +87,10 @@ export const itemList: ItemData[] = [
             "hitboxOffsetMultipler": 0.9,
             "cooldown": 2000,
             "attackDelay": 200,
+            "damage": 5.5,
+            "knockback": 20,
+            "force": 10,
+            "forceDelay": 0,
             "canMove": true
         }
     },
@@ -94,6 +108,10 @@ export const itemList: ItemData[] = [
             "hitboxOffsetMultipler": 1.2,
             "cooldown": 3000,
             "attackDelay": 200,
+            "damage": 5.5,
+            "knockback": 22,
+            "force": -10,
+            "forceDelay": 100,
             "canMove": true
         }
     },
@@ -110,6 +128,10 @@ export const itemList: ItemData[] = [
             "hitboxOffsetMultipler": 0,
             "cooldown": 2500,
             "attackDelay": 200,
+            "damage": 4.5,
+            "knockback": -8,
+            "force": 16,
+            "forceDelay": 0,
             "canMove": true
         }
     },
@@ -130,6 +152,10 @@ export const itemList: ItemData[] = [
             "hitboxOffsetMultipler": 2.4,
             "cooldown": 4000,
             "attackDelay": 200,
+            "damage": 5,
+            "knockback": 16,
+            "force": -10,
+            "forceDelay": 0,
             "canMove": false
         }
     },
@@ -145,8 +171,12 @@ export const itemList: ItemData[] = [
                 "height": 0.5
             },
             "hitboxOffsetMultipler": 3.6,
-            "cooldown": 10000,
+            "cooldown": 11000,
             "attackDelay": 0,
+            "damage": 12,
+            "knockback": 26,
+            "force": -10,
+            "forceDelay": 0,
             "canMove": true
         }
     },
@@ -157,6 +187,7 @@ export const itemList: ItemData[] = [
             "texture": "bow",
             "projectileTexture": "arrow",
             "spriteOffsetMultipler": 0.8,
+            "offsetMultipler": 0.8,
             "hitboxSize": {
                 "width": 0.4,
                 "height": 0.1
@@ -165,9 +196,15 @@ export const itemList: ItemData[] = [
             "range": 6,
             "cooldown": 2000,
             "attackDelay": 100,
+            "damage": 5,
+            "knockback": 20,
+            "force": -8,
+            "forceDelay": 100,
+            "isPenetrating": false,
             "canMove": false
         }
     },
+
     {
         "id": "bow2",
         "type": "range",
@@ -175,14 +212,20 @@ export const itemList: ItemData[] = [
             "texture": "bow",
             "projectileTexture": "big-arrow",
             "spriteOffsetMultipler": 0.8,
+            "offsetMultipler": 0.8,
             "hitboxSize": {
                 "width": 0.4,
                 "height": 0.2
             },
-            "speed": 30,
+            "speed": 25,
             "range": 6,
             "cooldown": 8000,
             "attackDelay": 100,
+            "damage": 10,
+            "knockback": 22,
+            "force": -16,
+            "forceDelay": 100,
+            "isPenetrating": false,
             "canMove": false
         }
     },
@@ -200,6 +243,10 @@ export const itemList: ItemData[] = [
             "hitboxOffsetMultipler": 0.4,
             "cooldown": 7000,
             "attackDelay": 300,
+            "damage": 10,
+            "knockback": 8,
+            "force": 24,
+            "forceDelay": 200,
             "canMove": false
         }
     },
@@ -210,6 +257,7 @@ export const itemList: ItemData[] = [
             "texture": "throw",
             "projectileTexture": "blue-knife",
             "spriteOffsetMultipler": 0.9,
+            "offsetMultipler": 0.7,
             "hitboxSize": {
                 "width": 0.2,
                 "height": 0.1
@@ -217,7 +265,12 @@ export const itemList: ItemData[] = [
             "speed": 10,
             "range": 8,
             "cooldown": 500,
-            "attackDelay": 100,
+            "attackDelay": 200,
+            "damage": 2.2,
+            "knockback": 10,
+            "force": -10,
+            "forceDelay": 200,
+            "isPenetrating": true,
             "canMove": true
         }
     },
@@ -228,6 +281,7 @@ export const itemList: ItemData[] = [
             "texture": "throw",
             "projectileTexture": "fireball",
             "spriteOffsetMultipler": 0.9,
+            "offsetMultipler": 0.7,
             "hitboxSize": {
                 "width": 0.2,
                 "height": 0.2
@@ -236,6 +290,11 @@ export const itemList: ItemData[] = [
             "range": 7,
             "cooldown": 2000,
             "attackDelay": 0,
+            "damage": 4,
+            "knockback": 10,
+            "force": -8,
+            "forceDelay": 100,
+            "isPenetrating": false,
             "canMove": true
         }
     },
@@ -246,14 +305,20 @@ export const itemList: ItemData[] = [
             "texture": "throw",
             "projectileTexture": "puller",
             "spriteOffsetMultipler": 0.9,
+            "offsetMultipler": 0.7,
             "hitboxSize": {
                 "width": 0.2,
                 "height": 0.2
             },
-            "speed": 15,
+            "speed": 20,
             "range": 7,
             "cooldown": 8000,
             "attackDelay": 100,
+            "damage": 7,
+            "knockback": -16,
+            "force": -4,
+            "forceDelay": 100,
+            "isPenetrating": true,
             "canMove": true
         }
     },

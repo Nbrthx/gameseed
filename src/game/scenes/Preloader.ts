@@ -43,13 +43,39 @@ export class Preloader extends Scene
         this.load.spritesheet('fire-burst2', 'effect/fire-burst2.png', { frameWidth: 198, frameHeight: 32 })
         this.load.spritesheet('healing', 'effect/healing.png', { frameWidth: 64, frameHeight: 64 })
 
-        this.load.spritesheet('bullet', 'effect/bullet.png', { frameWidth: 48, frameHeight: 16 })
+        this.load.spritesheet('shot', 'effect/shot.png', { frameWidth: 48, frameHeight: 16 })
         this.load.spritesheet('explode', 'effect/explode.png', { frameWidth: 64, frameHeight: 64 })
         this.load.spritesheet('arrow', 'effect/arrow.png', { frameWidth: 48, frameHeight: 16 })
         this.load.spritesheet('big-arrow', 'effect/big-arrow.png', { frameWidth: 48, frameHeight: 16 })
         this.load.spritesheet('blue-knife', 'effect/blue-knife.png', { frameWidth: 32, frameHeight: 16 })
         this.load.spritesheet('fireball', 'effect/fireball.png', { frameWidth: 32, frameHeight: 16 })
         this.load.spritesheet('puller', 'effect/puller.png', { frameWidth: 32, frameHeight: 16 })
+
+        // Icon
+        this.load.image('icon-punch', 'icon/punch.png')
+        this.load.image('icon-sword', 'icon/sword.png')
+        this.load.image('icon-sword2', 'icon/sword2.png')
+        this.load.image('icon-sword3', 'icon/sword3.png')
+        this.load.image('icon-dagger', 'icon/dagger.png')
+        this.load.image('icon-fire-burst', 'icon/fire-burst.png')
+        this.load.image('icon-fire-burst2', 'icon/fire-burst2.png')
+        this.load.image('icon-healing', 'icon/healing.png')
+        this.load.image('icon-healing2', 'icon/healing2.png')
+
+        this.load.image('icon-shot', 'icon/shot.png')
+        this.load.image('icon-bow', 'icon/bow.png')
+        this.load.image('icon-bow2', 'icon/bow2.png')
+        this.load.image('icon-blue-knife', 'icon/blue-knife.png')
+        this.load.image('icon-fireball', 'icon/fireball.png')
+        this.load.image('icon-puller', 'icon/puller.png')
+
+        // Audio
+
+        this.load.audio('audio-punch', 'audio/punch.wav')
+        this.load.audio('audio-throw', 'audio/punch.wav')
+        this.load.audio('audio-sword', 'audio/sword.mp3')
+        this.load.audio('audio-bow', 'audio/bow.wav')
+        this.load.audio('audio-dagger', 'audio/dagger.wav')
 
         // Environment
 
@@ -139,7 +165,7 @@ export class Preloader extends Scene
         })
         this.anims.create({
             key: 'fire-burst2-attack',
-            frames: this.anims.generateFrameNumbers('fire-burst2', { frames: [0, 1, 2, 3, 4, 5, 5] }),
+            frames: this.anims.generateFrameNumbers('fire-burst2', { frames: [0, 1, 2, 3, 4, 4, 4] }),
             frameRate: 20
         })
         this.anims.create({

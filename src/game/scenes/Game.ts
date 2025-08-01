@@ -94,7 +94,7 @@ export class Game extends Scene
         })
 
         this.lights.enable()
-        this.lights.setAmbientColor(0xccccdd)
+        this.lights.setAmbientColor(0xccddee)
 
         this.networkHandler = new NetworkHandler(this)
 
