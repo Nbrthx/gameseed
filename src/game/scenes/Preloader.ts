@@ -44,12 +44,14 @@ export class Preloader extends Scene
         this.load.spritesheet('healing', 'effect/healing.png', { frameWidth: 64, frameHeight: 64 })
 
         this.load.spritesheet('shot', 'effect/shot.png', { frameWidth: 48, frameHeight: 16 })
-        this.load.spritesheet('explode', 'effect/explode.png', { frameWidth: 64, frameHeight: 64 })
         this.load.spritesheet('arrow', 'effect/arrow.png', { frameWidth: 48, frameHeight: 16 })
         this.load.spritesheet('big-arrow', 'effect/big-arrow.png', { frameWidth: 48, frameHeight: 16 })
         this.load.spritesheet('blue-knife', 'effect/blue-knife.png', { frameWidth: 32, frameHeight: 16 })
         this.load.spritesheet('fireball', 'effect/fireball.png', { frameWidth: 32, frameHeight: 16 })
         this.load.spritesheet('puller', 'effect/puller.png', { frameWidth: 32, frameHeight: 16 })
+
+        this.load.spritesheet('explode', 'effect/explode.png', { frameWidth: 64, frameHeight: 64 })
+        this.load.image('red-particle', 'effect/red-circle.png')
 
         // Icon
         this.load.image('icon-punch', 'icon/punch.png')
@@ -69,13 +71,28 @@ export class Preloader extends Scene
         this.load.image('icon-fireball', 'icon/fireball.png')
         this.load.image('icon-puller', 'icon/puller.png')
 
+        this.load.image('book-warrior', 'icon/book/warrior.png')
+        this.load.image('book-archer', 'icon/book/archer.png')
+        this.load.image('book-mage', 'icon/book/mage.png')
+        this.load.image('book-ninja', 'icon/book/ninja.png')
+        this.load.image('book-healer', 'icon/book/healer.png')
+        this.load.image('book-assassin', 'icon/book/assassin.png')
+
         // Audio
+
+        this.load.audio('audio-step', 'audio/step.wav')
+        this.load.audio('audio-hit', 'audio/hit.ogg')
 
         this.load.audio('audio-punch', 'audio/punch.wav')
         this.load.audio('audio-throw', 'audio/punch.wav')
         this.load.audio('audio-sword', 'audio/sword.mp3')
+        this.load.audio('audio-sword2', 'audio/sword.mp3')
+        this.load.audio('audio-sword3', 'audio/sword.mp3')
         this.load.audio('audio-bow', 'audio/bow.wav')
         this.load.audio('audio-dagger', 'audio/dagger.wav')
+        this.load.audio('audio-healing', 'audio/heal.ogg')
+        this.load.audio('audio-fire-burst', 'audio/fire.wav')
+        this.load.audio('audio-fire-burst2', 'audio/fire.wav')
 
         // Environment
 
@@ -102,6 +119,7 @@ export class Preloader extends Scene
         this.load.image('ui-debug', 'ui/debug.png')
         this.load.image('ui-chat', 'ui/chat.png')
         this.load.image('ui-book-button', 'ui/book-button.png')
+        this.load.image('ask-button', 'ui/ask-button.png')
 
         this.load.spritesheet('cooldown-anim', 'ui/cooldown-anim.png', { frameWidth: 32, frameHeight: 32 })
 

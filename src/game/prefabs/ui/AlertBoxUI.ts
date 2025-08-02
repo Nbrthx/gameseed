@@ -1,5 +1,5 @@
 export class AlertBoxUI extends Phaser.GameObjects.Container {
-    private box: Phaser.GameObjects.NineSlice;
+    private box: Phaser.GameObjects.Rectangle;
     private text: Phaser.GameObjects.Text;
     private buttonClose: Phaser.GameObjects.Text;
     private buttonOk: Phaser.GameObjects.Text;
@@ -12,7 +12,7 @@ export class AlertBoxUI extends Phaser.GameObjects.Container {
         const bg = scene.add.rectangle(0, 0, scene.scale.width, scene.scale.height, 0x000000, 0.4);
         bg.setInteractive();
 
-        this.box = scene.add.nineslice(0, 0, 'button-nineslice', 0, 128, 64, 4, 4, 4, 4);
+        this.box = scene.add.rectangle(0, 0, 128, 64, 0xeeeecc);
         this.box.setScale(4);
         this.box.setAlpha(0.6)
 

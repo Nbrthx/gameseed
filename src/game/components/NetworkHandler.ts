@@ -5,7 +5,7 @@ import { isMobile } from "../scenes/GameUI"
 import { Player } from "../prefabs/Player"
 import { Projectile, ProjectileConfig } from '../prefabs/items/RangeWeapon'
 import { MapSetup } from './MapSetup'
-import { Enemy } from '../prefabs/Enemy'
+import { Enemy, enemyList } from '../prefabs/Enemy'
 
 export interface OutputData{
     uid: string,
@@ -45,6 +45,7 @@ interface Account{
         leg: string
     }
     magicBook: string
+    ownedBooks: string[]
 }
 
 export class NetworkHandler{
@@ -85,6 +86,10 @@ export class NetworkHandler{
 
         this.socket.on('otherBookUpdate', this.otherBookUpdate.bind(this))
 
+        this.socket.on('ownedBooksUpdate', this.ownedBooksUpdate.bind(this))
+
+        this.socket.on('questProgress', this.questProgress.bind(this))
+
         this.socket.on('disconnect', () => {
             this.socket.connect()
             setTimeout(() => {
@@ -121,6 +126,9 @@ export class NetworkHandler{
         // scene.player.syncData(account.health, account.inventory, 0, account.outfit)
 
         scene.UI.setupUI(scene.player)
+        
+        scene.UI.booksUI.ownedBooks = account.ownedBooks
+        scene.UI.booksUI.showBookList()
 
         others.forEach(v => {
             if(v.uid == this.socket.id) return
@@ -248,7 +256,7 @@ export class NetworkHandler{
                 if(other.health <= 0){
                     scene.others.splice(scene.others.indexOf(other), 1)
                     other.destroy()
-                    this.scene.add.particles(other.x, other.y, 'red-circle-particle', {
+                    this.scene.add.particles(other.x, other.y, 'red-particle', {
                         color: [0xcc9999],
                         lifespan: 500,
                         speed: { min: 200, max: 300 },
@@ -287,7 +295,7 @@ export class NetworkHandler{
                 if(enemy.health <= 0){
                     scene.enemies.splice(scene.enemies.indexOf(enemy), 1)
                     enemy.destroy()
-                    this.scene.add.particles(enemy.x, enemy.y, 'red-circle-particle', {
+                    this.scene.add.particles(enemy.x, enemy.y, 'red-particle', {
                         color: [0xcc9999],
                         lifespan: 500,
                         speed: { min: 200, max: 300 },
@@ -391,6 +399,24 @@ export class NetworkHandler{
 
         other.magicBook.changeBook(id)
         other.equipItem(0)
+    }
+
+    ownedBooksUpdate(ownedBooks: string[]){
+        this.scene.UI.booksUI.ownedBooks = ownedBooks
+        this.scene.UI.booksUI.showBookList()
+    }
+
+    questProgress(taskInstruction: string, taskProgress?: { type: string, target: string, progress: number, max: number }[]){
+        const scene = this.scene
+
+        let text = '\n'
+        taskProgress?.forEach(v => {
+            let target = ''
+            if(v.type == 'kill') target = enemyList.find((enemy) => enemy.id == v.target)?.name || v.target
+            text += `${v.type} ${target}: ${v.progress}/${v.max}\n`
+        })
+        
+        scene.UI.instructionText.setText(taskInstruction+text)
     }
 
     destroy(){

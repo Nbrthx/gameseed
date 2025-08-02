@@ -23,7 +23,7 @@ export interface Account{
         leg: string
     }
     magicBook: string
-    classList: string[]
+    ownedBooks: string[]
     questCompleted: string[]
     questInProgress?: [string, number[]]
 }
@@ -41,7 +41,22 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/', (_req, res) => res.sendFile(htmlPath+'/index.html'))
 
-const accounts: Account[] = []
+const accounts: Account[] = [
+    {
+        username: 'admin',
+        health: 100,
+        outfit: {
+            isMale: true,
+            hair: 'basic',
+            face: 'basic',
+            body: 'basic',
+            leg: 'basic'
+        },
+        magicBook: 'warrior',
+        ownedBooks: ['warrior', 'archer', 'ninja', 'mage', 'healer', 'assassin'],
+        questCompleted: []
+    }
+]
 
 const authedId: Map<string, string> = new Map() // socket.id | username
 

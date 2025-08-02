@@ -31,8 +31,8 @@ export const magicBookList: {
         skills: ['shot', 'sword2', 'healing2']
     },
     {
-        id: 'assasin',
-        name: 'Book of Assasin',
+        id: 'assassin',
+        name: 'Book of Assassin',
         skills: ['punch', 'healing', 'sword3']
     }
 ]

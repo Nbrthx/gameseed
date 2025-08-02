@@ -5,6 +5,7 @@ import { SkillUI } from "../prefabs/ui/SkillUI";
 import { AlertBoxUI } from "../prefabs/ui/AlertBoxUI";
 import { BooksUI } from "../prefabs/ui/BooksUI";
 import { Player } from "../prefabs/Player";
+import { QuestUI } from "../prefabs/ui/QuestUI";
 
 export const isMobile = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
@@ -24,9 +25,11 @@ export class GameUI extends Scene{
     debugText: Phaser.GameObjects.Text
 
     skillUI: SkillUI
+    questUI: QuestUI
     alertBox: AlertBoxUI;
     bookButton: Phaser.GameObjects.Image;
     booksUI: BooksUI;
+    instructionText: Phaser.GameObjects.Text;
 
     constructor(){
         super('GameUI')
@@ -43,10 +46,16 @@ export class GameUI extends Scene{
         this.alertBox.setDepth(100)
         this.alertBox.setVisible(false)
 
-        this.debugText = this.add.text(100, 100, '', {
-            fontFamily: 'PixelFont', fontSize: 24,
+        this.debugText = this.add.text(this.scale.width-80, 200, '', {
+            fontFamily: 'PixelFont', fontSize: 24, align: 'right',
             stroke: '#000000', strokeThickness: 4
-        }).setOrigin(0)
+        }).setOrigin(1, 0.5)
+
+        this.add.rectangle(50, 20, 500, 192, 0x223344, 0.5).setOrigin(0)
+        this.instructionText = this.add.text(80, 40, 'No instructions yet', {
+            fontFamily: 'PixelFont', fontSize: 24,
+            color: '#fff'
+        }).setOrigin(0).setWordWrapWidth(440)
 
         setInterval(() => {
             const then = Date.now()
@@ -114,6 +123,8 @@ export class GameUI extends Scene{
 
     setupUI(_player: Player){
         if(this.booksUI) this.booksUI.destroy(true)
+        this.questUI = new QuestUI(this)
+        this.questUI.setVisible(false)
 
         this.booksUI = new BooksUI(this)
         this.booksUI.setVisible(false)

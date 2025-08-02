@@ -11,7 +11,7 @@ export interface QuestConfig{
     description: string
     taskInstruction: string // make it short
     task: Task[]
-    reward: { book: string }
+    reward: { book?: string }
     repeatable?: true
 }
 
@@ -21,77 +21,37 @@ const quests: QuestConfig[] = [
         id: 'quest1',
         npcId: 'npc1',
         name: 'Defeat the Swordman',
-        description: 'The Swordman is in the forest. Defeat him and get a sword.',
+        description: 'The Swordman is in the forest. Defeat him and get a reward.',
         taskInstruction: 'Defeat the Swordman',
-        task: [{ type: 'kill', target: 'enemy1', amount: 1 }],
-        reward: { book: 'warrior' }
+        task: [{ type: 'kill', target: 'enemy1', amount: 3 }],
+        reward: { book: 'healer' }
     },
     {
         id: 'quest2',
         npcId: 'npc1',
         name: 'Defeat the Archer',
-        description: 'The Archer is in the forest. Defeat him and get a bow.',
+        description: 'The Archer is in the forest. Defeat him and get a reward.',
         taskInstruction: 'Defeat the Archer',
-        task: [{ type: 'kill', target: 'enemy2', amount: 2  }],
-        reward: { book: 'archer' }
+        task: [{ type: 'kill', target: 'enemy2', amount: 4  }],
+        reward: { book: 'mage' }
     },
     {
         id: 'quest3',
         npcId: 'npc1',
         name: 'Defeat the Ninja',
-        description: 'The Ninja is in the forest. Defeat him and collect for me some wood. You will get some blue knife.',
+        description: 'The Ninja is in the east forest. Defeat him and get a reward.',
         taskInstruction: 'Defeat the Ninja',
-        task: [{ type: 'kill', target: 'enemy3', amount: 3  }],
-        reward: { book: 'archer' }
+        task: [{ type: 'kill', target: 'enemy3', amount: 5  }],
+        reward: { book: 'ninja' }
     },
     {
         id: 'quest4',
         npcId: 'npc1',
-        name: 'Defeat the Assasin',
-        description: 'The Assasin is in the forest. Defeat him and collect for me some wood. You will get some dagger.',
-        taskInstruction: 'Defeat the Assasin',
-        task: [{ type: 'kill', target: 'enemy4', amount: 4  }],
-        reward: { book: 'archer' }
-    },
-    {
-        id: 'quest5',
-        npcId: 'npc2',
-        name: 'Grinding Sword',
-        description: 'The Swordman is in the forest. Defeat him and collect for me some wood. You will get a more sword.',
-        taskInstruction: 'Defeat the Swordman',
-        task: [{ type: 'kill', target: 'enemy1', amount: 1 }],
-        reward: { book: 'archer' },
-        repeatable: true
-    },
-    {
-        id: 'quest6',
-        npcId: 'npc2',
-        name: 'Grinding Bow',
-        description: 'The Archer and The Swordman is in the forest. Defeat them and collect for me some wood. You will get a more bow.',
-        taskInstruction: 'Defeat the Archer',
-        task: [{ type: 'kill', target: 'enemy1', amount: 3 }, { type: 'kill', target: 'enemy2', amount: 1 }],
-        reward: { book: 'archer' },
-        repeatable: true
-    },
-    {
-        id: 'quest7',
-        npcId: 'npc2',
-        name: 'Grinding Blue Knife',
-        description: 'The Ninja, The Archer and The Swordman is in the forest. Defeat them and collect for me some wood. You will get a more blue knife.',
-        taskInstruction: 'Defeat the Ninja',
-        task: [{ type: 'kill', target: 'enemy1', amount: 3 }, { type: 'kill', target: 'enemy2', amount: 2 }, { type: 'kill', target: 'enemy3', amount: 1 }],
-        reward: { book: 'archer' },
-        repeatable: true
-    },
-    {
-        id: 'quest8',
-        npcId: 'npc2',
-        name: 'Grinding Dagger',
-        description: 'All types of enemies is in the forest. Defeat them and collect for me some wood. You will get a more dagger.',
-        taskInstruction: 'Defeat the Assasin',
-        task: [{ type: 'kill', target: 'enemy1', amount: 5 }, { type: 'kill', target: 'enemy2', amount: 3 }, { type: 'kill', target: 'enemy2', amount: 1 }, { type: 'kill', target: 'enemy4', amount: 1 }],
-        reward: { book: 'archer' },
-        repeatable: true
+        name: 'Defeat the Assassin',
+        description: 'The Assassin is in the north forest. Defeat him and get a reward.',
+        taskInstruction: 'Defeat the Assassin',
+        task: [{ type: 'kill', target: 'enemy4', amount: 6  }],
+        reward: { book: 'assassin' }
     }
 ]
 

@@ -2,6 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { GameManager, InputData } from './GameManager';
 import { Server as HTTPServer } from 'http'
 import { Account } from './server';
+import { QuestConfig, Quests } from './components/Quests';
 // import { QuestConfig, Quests } from './components/Quests';
 
 // interface OutfitList {
@@ -61,6 +62,14 @@ export class SocketManager {
         socket.on('confirmChangeWorld', this.confirmChangeWorld.bind(this, socket));
 
         socket.on('changeBook', this.changeBook.bind(this, socket));
+
+        socket.on('getQuestData', this.getQuestData.bind(this, socket));
+
+        socket.on('acceptQuest', this.acceptQuest.bind(this, socket));
+
+        socket.on('declineQuest', this.declineQuest.bind(this, socket));
+
+        socket.on('completeQuest', this.completeQuest.bind(this, socket));
 
         socket.on('ping', (callback) => {
             callback()
@@ -129,6 +138,108 @@ export class SocketManager {
         player.account.magicBook = id
 
         socket.broadcast.to(player.scene.id).emit('otherBookUpdate', socket.id, id)
+    }
+
+    getQuestData(socket: Socket, npcId: string, callback: (quest: QuestConfig | QuestConfig[], haveOtherQuest: string, progressState: number) => void) {
+        if(typeof npcId !== 'string') return
+
+        const player = this.getPlayer(socket.id)
+        if(!player) return
+
+        const quest = Quests.isNpcQuestRepeatable(npcId) ? Quests.getQuestsByNpcId(npcId) : Quests.getQuestByNpcId(npcId, player.account.questCompleted)
+        if(!quest) return callback({
+            id: '',
+            npcId: '',
+            name: '',
+            description: '',
+            reward: {},
+            taskInstruction: '',
+            task: []
+        }, '', 0)
+
+        let progressState = 0
+
+        if(player.questInProgress && !Array.isArray(quest)){
+            progressState = player.questInProgress.config.id === quest.config.id ?
+                (player.questInProgress.isComplete ? 2 : 1) : 0;
+        }
+        else if(Array.isArray(quest)){
+            for(const q of quest){
+                if(player.questInProgress && player.questInProgress.config.id === q.config.id){
+                    progressState = player.questInProgress.isComplete ? 2 : 1
+                    break
+                }
+            }
+        }
+
+        if(!Array.isArray(quest)) callback(quest.config, player.questInProgress?.config.id || '', progressState)
+        else callback(quest.map(v => v.config), player.questInProgress?.config.id || '', progressState)
+    }
+
+    acceptQuest(socket: Socket, npcId: string, questId?: string) {
+        if(typeof npcId !== 'string') return
+
+        const player = this.getPlayer(socket.id)
+        if(!player) return
+
+        const quest = questId ? Quests.getQuestByQuestId(questId) : Quests.getQuestByNpcId(npcId, player.account.questCompleted)
+        if(!quest) return
+
+        console.log('Quest accepted:', quest.config.id)
+
+        player.questInProgress = quest
+        player.account.questInProgress = [quest.config.id, quest.taskProgress]
+
+        quest.onProgress((taskProgress) => {
+            player.account.questInProgress = [quest.config.id, taskProgress]
+            socket.emit('questProgress', quest.config.taskInstruction, taskProgress.map((v, i) => {
+                return {
+                    type: quest.config.task[i].type,
+                    target: quest.config.task[i].target,
+                    progress: v,
+                    max: quest.config.task[i].amount
+                }
+            }))
+            console.log('Quest progress:', taskProgress) // Debugging line
+        })
+
+        quest.setTaskProgress(quest.taskProgress)
+    }
+
+    declineQuest(socket: Socket){
+        const player = this.getPlayer(socket.id)
+        if(!player || !player.questInProgress) return
+
+        player.questInProgress.destroy()
+        player.questInProgress = null
+        player.account.questInProgress = undefined
+
+        socket.emit('questProgress', 'No instruction yet')
+    }
+
+    completeQuest(socket: Socket) {
+        const player = this.getPlayer(socket.id)
+        if(!player || !player.questInProgress) return
+
+        const quest = player.questInProgress
+        
+        if(quest && quest.isComplete){
+            const { book } = quest.config.reward
+
+            player.account.questCompleted.push(quest.config.id);
+            
+            if(book){
+                player.account.ownedBooks = player.account.ownedBooks.filter(v => v != book)
+                player.account.ownedBooks.push(book)
+                socket.emit('ownedBooksUpdate', player.account.ownedBooks)
+            }
+
+            player.questInProgress.destroy()
+            player.questInProgress = null
+            player.account.questInProgress = undefined
+            
+            socket.emit('questProgress', 'No instruction yet')
+        }
     }
 
     // Not Listener

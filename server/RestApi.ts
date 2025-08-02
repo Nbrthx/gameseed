@@ -31,7 +31,7 @@ export class RestApi{
                     leg: 'basic'
                 },
                 magicBook: 'warrior',
-                classList: [],
+                ownedBooks: ['warrior', 'archer'],
                 questCompleted: []
             })
             this.authedId.set(id, username)

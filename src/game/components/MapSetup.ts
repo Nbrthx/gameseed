@@ -1,5 +1,7 @@
 import p from 'planck'
 import { Game } from '../scenes/Game'
+import { NPC, npcList } from '../prefabs/NPC'
+import { handleQuest } from './HandleQuest'
 
 export class MapSetup{
 
@@ -10,6 +12,7 @@ export class MapSetup{
     entrances: p.Body[]
     healAreas: p.Body[]
     enterpoint: Map<string, p.Vec2>
+    npcs: NPC[]
 
     constructor(scene: Game, mapName: string){
         this.scene = scene
@@ -17,6 +20,7 @@ export class MapSetup{
         
         this.layers = []
         this.collision = []
+        this.npcs = []
         this.entrances = []
         this.healAreas = []
         this.enterpoint = new Map()
@@ -34,6 +38,7 @@ export class MapSetup{
 
         this.initCollision(map)
         this.createBounds(map.width, map.height)
+        this.createNPCs(map)
         this.createEntrances(map)
         this.createHealArea(map)
         this.createEnterPoint(map)
@@ -90,6 +95,29 @@ export class MapSetup{
             const body = scene.world.createBody(new p.Vec2((o.x)/32, (o.y+2)/32))
             body.createFixture(new p.Box(42/2/32, 10/2/32))
             this.collision.push(body)
+        })
+    }
+
+    createNPCs(map: Phaser.Tilemaps.Tilemap){
+        const scene = this.scene
+
+        map.getObjectLayer('npcs')?.objects.forEach(_o => {
+            const o = _o as { name: string, x: number, y: number, width: number, height: number}
+
+            const npc = new NPC(scene, o.x*this.gameScale, o.y*this.gameScale, o.name)
+            const npcData = npcList.find(v => v.id == o.name) || {
+                name: o.name,
+                biography: 'No biography available.',
+            }
+            
+            npc.askButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+                pointer.event.preventDefault()
+                scene.input.stopPropagation()
+
+                handleQuest(scene, o.name, npcData.name, npcData.biography, { x: npc.x, y: npc.y })
+            })
+
+            this.npcs.push(npc)
         })
     }
 
@@ -188,6 +216,11 @@ export class MapSetup{
             v.destroy()
         })
         this.scene.enemies = []
+
+        this.npcs.forEach(v => {
+            v.destroy()
+        })
+        this.npcs = []
 
         this.layers.forEach(v => {
             v.destroy()
