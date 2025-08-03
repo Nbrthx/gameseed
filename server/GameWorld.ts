@@ -279,7 +279,8 @@ export class Game{
             username: account.username,
             from: from || 'spawn',
             health: account.health,
-            outfit: account.outfit
+            outfit: account.outfit,
+            magicBook: account.magicBook
         });
 
 

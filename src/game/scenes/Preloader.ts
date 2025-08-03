@@ -109,7 +109,15 @@ export class Preloader extends Scene
         // Character
         this.load.image('shadow', 'char/shadow.png')
         this.load.spritesheet('male', 'char/male.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('male', 'char/male.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('male1', 'char/male1.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('male2', 'char/male2.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('male3', 'char/male3.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('male4', 'char/male4.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('male', 'char/male4.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('female', 'char/female.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('female1', 'char/female1.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('female2', 'char/female2.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('npc1', 'char/npc1.png', { frameWidth: 64, frameHeight: 64 });
 
         // UI
         this.load.image('ui-skills', 'ui/skills.png')
@@ -119,36 +127,42 @@ export class Preloader extends Scene
         this.load.image('ui-debug', 'ui/debug.png')
         this.load.image('ui-chat', 'ui/chat.png')
         this.load.image('ui-book-button', 'ui/book-button.png')
+        this.load.image('ui-outfit-button', 'ui/outfit-button.png')
         this.load.image('ask-button', 'ui/ask-button.png')
 
         this.load.spritesheet('cooldown-anim', 'ui/cooldown-anim.png', { frameWidth: 32, frameHeight: 32 })
 
         // HTML
         this.load.html('inputname', 'html/inputname.html');
+        this.load.html('chatbox', 'html/chatbox.html');
 
     }
 
-    create ()
-    {
+    create () {
+
+        const chars = ['male', 'male1', 'male2', 'male3', 'male4', 'female', 'female1', 'female2', 'npc1']
+
         // Char
-        this.anims.create({
-            key: 'idle',
-            frames: this.anims.generateFrameNumbers('male', { frames: [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 5, 6] }),
-            frameRate: 12,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'rundown',
-            frames: this.anims.generateFrameNumbers('male', { frames: [7, 8, 9, 10, 11, 12, 13, 14] }),
-            frameRate: 12,
-            repeat: -1
-        })
-        this.anims.create({
-            key: 'runup',
-            frames: this.anims.generateFrameNumbers('male', { frames: [15, 16, 17, 18, 19, 20, 21, 22] }),
-            frameRate: 12,
-            repeat: -1
-        })
+        for(let i=0; i<chars.length; i++){
+            this.anims.create({
+                key: chars[i]+'-idle',
+                frames: this.anims.generateFrameNumbers(chars[i], { frames: [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 5, 6] }),
+                frameRate: 12,
+                repeat: -1
+            })
+            this.anims.create({
+                key: chars[i]+'-rundown',
+                frames: this.anims.generateFrameNumbers(chars[i], { frames: [7, 8, 9, 10, 11, 12, 13, 14] }),
+                frameRate: 12,
+                repeat: -1
+            })
+            this.anims.create({
+                key: chars[i]+'-runup',
+                frames: this.anims.generateFrameNumbers(chars[i], { frames: [15, 16, 17, 18, 19, 20, 21, 22] }),
+                frameRate: 12,
+                repeat: -1
+            })
+        }
 
         // Visual Effect
         this.anims.create({

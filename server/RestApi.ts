@@ -23,13 +23,7 @@ export class RestApi{
             this.accounts.push({
                 username: username,
                 health: 100,
-                outfit: {
-                    isMale: false,
-                    hair: 'basic',
-                    face: 'basic',
-                    body: 'basic',
-                    leg: 'basic'
-                },
+                outfit: 'female',
                 magicBook: 'warrior',
                 ownedBooks: ['warrior', 'archer'],
                 questCompleted: []

@@ -125,10 +125,10 @@ export const itemList: Item[] = [
             },
             "hitboxOffsetMultipler": 0,
             "cooldown": 2500,
-            "attackDelay": 200,
-            "damage": 4.5,
+            "attackDelay": 150,
+            "damage": 6,
             "knockback": -8,
-            "force": 16,
+            "force": 18,
             "forceDelay": 0,
             "canMove": true
         }

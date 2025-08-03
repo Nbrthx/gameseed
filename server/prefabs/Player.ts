@@ -28,13 +28,7 @@ export class Player{
     knockbackDir: p.Vec2
 
     magicBook: MagicBook
-    outfit: {
-        isMale: boolean
-        hair: string
-        face: string
-        body: string
-        leg: string
-    }
+    outfit: string
     questInProgress: Quest | null = null
     isPvpProtected: boolean
 

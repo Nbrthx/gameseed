@@ -37,13 +37,7 @@ interface Account{
     username: string,
     xp: number,
     health: number,
-    outfit: {
-        isMale: boolean
-        hair: string
-        face: string
-        body: string
-        leg: string
-    }
+    outfit: string
     magicBook: string
     ownedBooks: string[]
 }
@@ -86,9 +80,13 @@ export class NetworkHandler{
 
         this.socket.on('otherBookUpdate', this.otherBookUpdate.bind(this))
 
+        this.socket.on('otherOutfitUpdate', this.otherOutfitUpdate.bind(this))
+
         this.socket.on('ownedBooksUpdate', this.ownedBooksUpdate.bind(this))
 
         this.socket.on('questProgress', this.questProgress.bind(this))
+
+        this.socket.on('chat', this.chat.bind(this))
 
         this.socket.on('disconnect', () => {
             this.socket.connect()
@@ -104,14 +102,7 @@ export class NetworkHandler{
         activeIndex: number
         pos: { x: number, y: number }
         health: number
-        outfit: {
-            isMale: boolean
-            color: number
-            hair: string
-            face: string
-            body: string
-            leg: string
-        }
+        outfit: string
         magicBook: string
     }[]){
         const scene = this.scene
@@ -123,6 +114,7 @@ export class NetworkHandler{
         scene.player.barUpdate(scene.player.damageBar)
         scene.player.magicBook.changeBook(account.magicBook)
         scene.player.equipItem(0)
+        scene.player.outfit = account.outfit
         // scene.player.syncData(account.health, account.inventory, 0, account.outfit)
 
         scene.UI.setupUI(scene.player)
@@ -140,6 +132,7 @@ export class NetworkHandler{
             other.barUpdate(other.damageBar)
             other.magicBook.changeBook(v.magicBook)
             other.equipItem(v.activeIndex)
+            other.outfit = v.outfit
 
             scene.others.push(other)
         })
@@ -150,20 +143,20 @@ export class NetworkHandler{
         username: string
         from: string
         health: number
-        outfit: {
-            isMale: boolean
-            color: number
-            hair: string
-            face: string
-            body: string
-            leg: string
-        }
+        outfit: string
+        magicBook: string
     }){
         const scene = this.scene
 
         const pos = scene.mapSetup.enterpoint.get(data.from) || { x: 100, y: 100 }
 
         const other = new Player(scene, pos.x, pos.y, data.uid, data.username)
+        other.health = data.health
+        other.barUpdate(other.damageBar)
+        other.magicBook.changeBook(data.magicBook)
+        other.equipItem(0)
+        other.outfit = data.outfit
+
         // other.syncData(data.health, data.items, 0, data.outfit)
 
         scene.others.push(other)
@@ -180,9 +173,7 @@ export class NetworkHandler{
     }
 
     output(data: GameState){
-        console.log('data received', data.id, this.scene.worldId)
         if(data.id != this.scene.worldId) return
-
 
         this.pendingOutput.push(data)
     }
@@ -401,6 +392,13 @@ export class NetworkHandler{
         other.equipItem(0)
     }
 
+    otherOutfitUpdate(uid: string, id: string){
+        const other = this.scene.others.find(v => v.uid == uid)
+        if(!other) return
+
+        other.outfit = id
+    }
+
     ownedBooksUpdate(ownedBooks: string[]){
         this.scene.UI.booksUI.ownedBooks = ownedBooks
         this.scene.UI.booksUI.showBookList()
@@ -417,6 +415,26 @@ export class NetworkHandler{
         })
         
         scene.UI.instructionText.setText(taskInstruction+text)
+    }
+
+    chat(data: { uid: string, username: string, msg: string}){
+        const scene = this.scene
+
+        if(scene.player.uid == data.uid){
+            scene.player.textbox.writeText(data.msg)
+        }
+        else{
+            const other = scene.others.find(v => v.uid == data.uid)
+            if(other) other.textbox.writeText(data.msg)
+        }
+
+        const msg = `${data.username} : ${data.msg}`
+        const wrap = new Array(scene.UI.chatTexts.getWrappedText(msg).length+1).join('\n')
+        scene.UI.chatTexts.setText(scene.UI.chatTexts.text+msg+'\n')
+        scene.UI.chatNames.setText(scene.UI.chatNames.text+data.username+wrap)
+
+        scene.UI.chatTexts.y = scene.UI.chatTexts.height > 300 ? -scene.UI.chatTexts.height+400 : 120
+        scene.UI.chatNames.y = scene.UI.chatTexts.y-2
     }
 
     destroy(){

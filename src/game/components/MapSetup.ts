@@ -166,7 +166,7 @@ export class MapSetup{
             scene.tweens.add({
                 targets: healArea,
                 alpha: 0.2,
-                duration: 1000,
+                duration: 500,
                 ease: 'Quad.easeOut',
                 yoyo: true,
                 repeat: -1

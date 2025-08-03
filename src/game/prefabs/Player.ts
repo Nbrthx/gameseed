@@ -19,6 +19,7 @@ export class Player extends Phaser.GameObjects.Container{
     magicBook: MagicBook
     itemInstance: BaseItem
 
+    outfit: string
     sprite: Phaser.GameObjects.Sprite
     emptyBar: Phaser.GameObjects.Rectangle
     damageBar: Phaser.GameObjects.Rectangle
@@ -72,7 +73,8 @@ export class Player extends Phaser.GameObjects.Container{
         this.attackDir = new p.Vec2(0, 0)
         this.itemInstance = new ItemInstance(scene, this.pBody, 'punch').itemInstance
 
-        this.sprite = scene.add.sprite(0, -36, 'player').setOrigin(0.5, 0.5).setScale(scene.gameScale)
+        this.outfit = 'female'
+        this.sprite = scene.add.sprite(0, -36, this.outfit).setOrigin(0.5, 0.5).setScale(scene.gameScale)
         this.sprite.play('idle', true)
         this.sprite.setPipeline('Light2D')
 
@@ -84,6 +86,7 @@ export class Player extends Phaser.GameObjects.Container{
         // this.aimAssist.setOrigin(-1.5, 0.5).setVisible(false).setRounded(8)
 
         this.aimAssist = scene.add.graphics()
+        this.aimAssist.setVisible(false)
         this.aimAssist.y = 14
         
         const shadow = scene.add.image(0, 19*scene.gameScale, 'shadow').setAlpha(0.4).setScale(scene.gameScale)
@@ -108,8 +111,8 @@ export class Player extends Phaser.GameObjects.Container{
         }
 
         if(vel.x != 0 || vel.y != 0){
-            if(vel.y > -0.1) this.sprite.play('rundown', true)
-            else this.sprite.play('runup', true)
+            if(vel.y > -0.1) this.sprite.play(this.outfit+'-rundown', true)
+            else this.sprite.play(this.outfit+'-runup', true)
         
             if(vel.x > 0) this.sprite.setFlipX(false)
             else if(vel.x < 0) this.sprite.setFlipX(true)
@@ -117,7 +120,8 @@ export class Player extends Phaser.GameObjects.Container{
             const { x, y } = this.pBody.getPosition()
             this.audio?.step.playSound(x, y)
         }
-        else this.sprite.play('idle', true)
+        else this.sprite.play(this.outfit+'-idle', true)
+        if(this.sprite.texture.key != this.outfit) this.sprite.setTexture(this.outfit)
 
         if(this.attackDir.length() > 0){
             if(this.itemInstance) this.itemInstance.use(this.attackDir.x, this.attackDir.y)

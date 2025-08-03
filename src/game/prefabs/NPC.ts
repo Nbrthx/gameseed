@@ -33,13 +33,13 @@ export class NPC extends Phaser.GameObjects.Container{
 
         scene.add.existing(this)
 
-        this.sprite = scene.add.sprite(0, -36, 'male')
+        this.sprite = scene.add.sprite(0, -36, npcList.find(v => v.id == id)?.id || 'npc1')
         this.sprite.setScale(scene.gameScale)
         this.sprite.setPipeline('Light2D')
 
         // const [isMale, color, hair, face, body, leg] = npcList.find(v => v.id == id)?.outfit || [false, 0xffffff, 'basic', 'basic', 'basic', 'basic']
         // this.sprite.setOutfit(isMale, color, hair, face, body, leg)
-        this.sprite.play('idle')
+        this.sprite.play((npcList.find(v => v.id == id)?.id || 'npc1')+'-idle')
 
         this.askButton = scene.add.image(0, -200, 'ask-button').setScale(scene.gameScale)
         this.askButton.setInteractive()

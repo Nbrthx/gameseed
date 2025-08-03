@@ -60,6 +60,7 @@ export class Game extends Scene
         this.player = new Player(this, enterPos.x, enterPos.y, this.socket.id as string, this.registry.get('username') || 'null')
         this.spatialAudio.addListenerBody(this.player.pBody)
         this.player.nameText.setColor('#66ffcc')
+        this.player.aimAssist.setVisible(true)
         this.camera.startFollow(this.player, true, 0.1, 0.1)
 
         this.others = []
@@ -94,7 +95,7 @@ export class Game extends Scene
         })
 
         this.lights.enable()
-        this.lights.setAmbientColor(0xccddee)
+        this.lights.setAmbientColor(0xffede6)
 
         this.networkHandler = new NetworkHandler(this)
 

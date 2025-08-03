@@ -12,7 +12,7 @@ interface EnemyConfig {
     visionDistance: number
     attackDistance: number
     weapon: string
-    outfit: [boolean, number, string, string, string, string]
+    outfit: string
 }
 
 export const enemyList: EnemyConfig[] = [
@@ -23,7 +23,7 @@ export const enemyList: EnemyConfig[] = [
         visionDistance: 6,
         attackDistance: 2,
         weapon: 'sword',
-        outfit: [true, 0xffaaaa, 'basic', 'basic', 'basic', 'basic']
+        outfit: 'male2'
     },
     {
         id: 'enemy2',
@@ -32,7 +32,7 @@ export const enemyList: EnemyConfig[] = [
         visionDistance: 6,
         attackDistance: 6,
         weapon: 'bow',
-        outfit: [false, 0xffaaaa, 'basic', 'basic', 'basic', 'basic']
+        outfit: 'female2'
     },
     {
         id: 'enemy3',
@@ -41,7 +41,7 @@ export const enemyList: EnemyConfig[] = [
         visionDistance: 7,
         attackDistance: 7,
         weapon: 'blue-knife',
-        outfit: [false, 0xffaaff, 'bodied', 'basic', 'grey', 'basic']
+        outfit: 'male3'
     },
     {
         id: 'enemy4',
@@ -50,7 +50,7 @@ export const enemyList: EnemyConfig[] = [
         visionDistance: 7,
         attackDistance: 2.5,
         weapon: 'sword',
-        outfit: [true, 0x99ccff, 'spread', 'basic', 'black', 'basic']
+        outfit: 'male4'
     }
 ]
 
@@ -114,7 +114,7 @@ export class Enemy extends Phaser.GameObjects.Container{
         this.attackDir = new p.Vec2(0, 0)
         this.itemInstance = new ItemInstance(scene, this.pBody, this.config.weapon).itemInstance
 
-        this.sprite = scene.add.sprite(0, -36, 'male').setOrigin(0.5).setScale(scene.gameScale)
+        this.sprite = scene.add.sprite(0, -36, this.config.outfit).setOrigin(0.5).setScale(scene.gameScale)
         this.sprite.play('idle', true)
         this.sprite.setPipeline('Light2D')
 
@@ -146,8 +146,8 @@ export class Enemy extends Phaser.GameObjects.Container{
         }
 
         if(vel.x != 0 || vel.y != 0){
-            if(vel.y > -0.1) this.sprite.play('rundown', true)
-            else this.sprite.play('runup', true)
+            if(vel.y > -0.1) this.sprite.play(this.config.outfit+'-rundown', true)
+            else this.sprite.play(this.config.outfit+'-runup', true)
         
             if(vel.x > 0) this.sprite.setFlipX(false)
             else if(vel.x < 0) this.sprite.setFlipX(true)
@@ -155,7 +155,7 @@ export class Enemy extends Phaser.GameObjects.Container{
             const { x, y } = this.pBody.getPosition()
             this.audio?.step.playSound(x, y)
         }
-        else this.sprite.play('idle', true)
+        else this.sprite.play(this.config.outfit+'-idle', true)
 
         if(this.attackDir.length() > 0){
             if(this.itemInstance) this.itemInstance.use(this.attackDir.x, this.attackDir.y)

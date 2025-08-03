@@ -76,7 +76,7 @@ const enemyList: EnemyConfig[] = [
         "zigzagDistance": 5,
         "stopDistance": 1.4,
         "attackSpeed": 1000,
-        "attackDelay": 20,
+        "attackDelay": 50,
         "weapon": "sword",
         "xpReward": 8,
         "itemReward": ["wood", 4],

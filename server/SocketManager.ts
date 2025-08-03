@@ -63,6 +63,8 @@ export class SocketManager {
 
         socket.on('changeBook', this.changeBook.bind(this, socket));
 
+        socket.on('changeOutfit', this.changeOutfit.bind(this, socket));
+
         socket.on('getQuestData', this.getQuestData.bind(this, socket));
 
         socket.on('acceptQuest', this.acceptQuest.bind(this, socket));
@@ -70,6 +72,8 @@ export class SocketManager {
         socket.on('declineQuest', this.declineQuest.bind(this, socket));
 
         socket.on('completeQuest', this.completeQuest.bind(this, socket));
+
+        socket.on('chat', this.chat.bind(this, socket));
 
         socket.on('ping', (callback) => {
             callback()
@@ -138,6 +142,16 @@ export class SocketManager {
         player.account.magicBook = id
 
         socket.broadcast.to(player.scene.id).emit('otherBookUpdate', socket.id, id)
+    }
+
+    changeOutfit(socket: Socket, id: string){
+        const player = this.getPlayer(socket.id)
+        if(!player) return
+
+        player.outfit = id
+        player.account.outfit = id
+
+        socket.broadcast.to(player.scene.id).emit('otherOutfitUpdate', socket.id, id)
     }
 
     getQuestData(socket: Socket, npcId: string, callback: (quest: QuestConfig | QuestConfig[], haveOtherQuest: string, progressState: number) => void) {
@@ -240,6 +254,20 @@ export class SocketManager {
             
             socket.emit('questProgress', 'No instruction yet')
         }
+    }
+
+    chat(socket: Socket, msg: string){
+        if(typeof msg !== 'string' || msg.length > 64) return
+        if(msg == '') return
+
+        const player = this.getPlayer(socket.id)
+        if(!player) return
+
+        this.io.to(player.scene.id).emit('chat', {
+            uid: socket.id,
+            username: player.account.username,
+            msg: msg
+        })
     }
 
     // Not Listener

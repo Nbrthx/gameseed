@@ -15,13 +15,7 @@ export interface Item {
 export interface Account{
     username: string
     health: number
-    outfit: {
-        isMale: boolean
-        hair: string
-        face: string
-        body: string
-        leg: string
-    }
+    outfit: string
     magicBook: string
     ownedBooks: string[]
     questCompleted: string[]
@@ -45,13 +39,7 @@ const accounts: Account[] = [
     {
         username: 'admin',
         health: 100,
-        outfit: {
-            isMale: true,
-            hair: 'basic',
-            face: 'basic',
-            body: 'basic',
-            leg: 'basic'
-        },
+        outfit: 'female',
         magicBook: 'warrior',
         ownedBooks: ['warrior', 'archer', 'ninja', 'mage', 'healer', 'assassin'],
         questCompleted: []

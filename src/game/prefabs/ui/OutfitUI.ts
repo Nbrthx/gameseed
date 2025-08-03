@@ -1,12 +1,29 @@
 import { GameUI } from "../../scenes/GameUI"
-import { magicBookList } from "../MagicBook"
+
+const outfitsList = [
+    {
+        id: 'male',
+        name: 'Miko',
+    },
+    {
+        id: 'male1',
+        name: 'Koko',
+    },
+    {
+        id: 'female',
+        name: 'Kelia',
+    },
+    {
+        id: 'female1',
+        name: 'Hina',
+    }
+]
 
 
-export class BooksUI extends Phaser.GameObjects.Container {
+export class OutfitUI extends Phaser.GameObjects.Container {
 
     scene: GameUI
-    bookList: Phaser.GameObjects.Text[]
-    ownedBooks: string[]
+    outfitList: Phaser.GameObjects.Text[]
 
     constructor(scene: GameUI) {
         super(scene, scene.scale.width-200, scene.scale.height/2)
@@ -14,8 +31,7 @@ export class BooksUI extends Phaser.GameObjects.Container {
         this.scene = scene
         scene.add.existing(this)
 
-        this.bookList = []
-        this.ownedBooks = []
+        this.outfitList = []
 
         const bg = scene.add.rectangle(-this.x, -this.y, scene.scale.width, scene.scale.height, 0x000000, 0.2)
         bg.setOrigin(0)
@@ -30,38 +46,36 @@ export class BooksUI extends Phaser.GameObjects.Container {
 
         this.add([bg, box])
 
-        this.showBookList()
+        this.showOutfitList()
     }
 
-    showBookList(){
+    showOutfitList(){
         let x = 0
-        for(let i=0; i<this.bookList.length; i++){
-            this.remove(this.bookList[i])
-            this.bookList[i].destroy()
+        for(let i=0; i<this.outfitList.length; i++){
+            this.remove(this.outfitList[i])
+            this.outfitList[i].destroy()
         }
-        this.bookList = []
+        this.outfitList = []
 
-        for(let i=0; i<magicBookList.length; i++){
-            if(!this.ownedBooks.includes(magicBookList[i].id)) continue
-
-            const text = this.scene.add.text(-360, -260+x*48, magicBookList[i].name, {
+        for(let i=0; i<outfitsList.length; i++){
+            const text = this.scene.add.text(-360, -260+x*48, outfitsList[i].name, {
                 fontFamily: 'PixelFont', fontSize: 32, color: '#ffffff',
                 stroke: '#000000', strokeThickness: 4
             }).setOrigin(0, 0.5)
+            
             text.setInteractive()
             text.on('pointerdown', () => {
-                this.scene.socket.emit('changeBook', magicBookList[i].id)
-                this.scene.gameScene.player.magicBook.changeBook(magicBookList[i].id)
-                this.scene.skillUI.changeBorder(0)
+                this.scene.socket.emit('changeOutfit', outfitsList[i].id)
+                this.scene.gameScene.player.outfit = outfitsList[i].id
                 
-                this.showBookList()
+                this.showOutfitList()
             })
 
-            if(this.scene.gameScene.player.magicBook.id === magicBookList[i].id){
+            if(this.scene.gameScene.player.outfit === outfitsList[i].id){
                 text.setTint(0x00ff00)
             }
 
-            this.bookList.push(text)
+            this.outfitList.push(text)
             this.add(text)
             x++
         }
