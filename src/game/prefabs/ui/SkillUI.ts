@@ -125,5 +125,8 @@ export class SkillUI extends Phaser.GameObjects.Container{
         this.scene.socket.emit('changeSkill', index)
     }
 
-
+    isCooldown(){
+        const skill = this.scene.gameScene.player.magicBook.skills[this.activeIndex]
+        return skill.timestamp+itemList.find(v => v.id === skill.id)!.config.cooldown > Date.now()
+    }
 }

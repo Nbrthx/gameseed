@@ -31,6 +31,9 @@ export class Preloader extends Scene
 
         this.load.image('logo', 'logo.png');
 
+        // Capsule Art Waton
+        this.load.image('capsule-art', 'capsule-art.png')
+
         // Visual Effect
         this.load.spritesheet('punch', 'effect/punch.png', { frameWidth: 64, frameHeight: 64 })
         this.load.spritesheet('throw', 'effect/throw.png', { frameWidth: 64, frameHeight: 64 })
@@ -93,6 +96,8 @@ export class Preloader extends Scene
         this.load.audio('audio-healing', 'audio/heal.ogg')
         this.load.audio('audio-fire-burst', 'audio/fire.wav')
         this.load.audio('audio-fire-burst2', 'audio/fire.wav')
+
+        this.load.audio('soundtrack', 'audio/soundtrack.mp3')
 
         // Environment
 

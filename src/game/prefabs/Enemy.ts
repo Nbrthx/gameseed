@@ -115,7 +115,6 @@ export class Enemy extends Phaser.GameObjects.Container{
         this.itemInstance = new ItemInstance(scene, this.pBody, this.config.weapon).itemInstance
 
         this.sprite = scene.add.sprite(0, -36, this.config.outfit).setOrigin(0.5).setScale(scene.gameScale)
-        this.sprite.play('idle', true)
         this.sprite.setPipeline('Light2D')
 
         // const [isMale, color, hair, face, body, leg] = this.config.outfit

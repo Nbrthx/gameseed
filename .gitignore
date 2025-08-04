@@ -13,6 +13,7 @@ dist
 dist-ssr
 serverjs.tar.gz
 dist.tar.gz
+dist.zip
 *.local
 
 # Editor directories and files

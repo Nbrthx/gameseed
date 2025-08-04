@@ -8,6 +8,7 @@ import { Player } from "../prefabs/Player";
 import { QuestUI } from "../prefabs/ui/QuestUI";
 import { OutfitUI } from "../prefabs/ui/OutfitUI";
 import { Chat } from "../prefabs/ui/Chat";
+import { Joystick } from "../prefabs/ui/Joystick";
 
 export const isMobile = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
@@ -38,6 +39,8 @@ export class GameUI extends Scene{
     chatTexts: any;
     chatNames: any;
     chat: Chat;
+    joystick: Joystick;
+    joystick2: any;
 
     constructor(){
         super('GameUI')
@@ -166,6 +169,40 @@ export class GameUI extends Scene{
         this.chat = new Chat(this, this.socket)
         this.chat.setVisible(false)
 
+        if(isMobile()){
+            this.joystick = new Joystick({
+                scene: this,
+                x: 400,
+                y: this.scale.height - 300,
+                size: 320,
+                knobSize: 120,
+                baseTint: 0xeeccff,
+                knobTint: 0x443355,
+                dynamic: true,
+            })
+
+            this.joystick2 = new Joystick({
+                scene: this,
+                x: this.scale.width - 360,
+                y: this.scale.height - 360,
+                size: 260,
+                knobSize: 80,
+                baseTint: 0xffccee,
+                knobTint: 0x553344,
+            })
+
+            this.joystick2.onPointerdown = () => {
+                this.gameScene.player?.aimAssist.setVisible(true)
+            }
+
+            this.joystick2.onPointerup = () => {
+                this.gameScene.player?.aimAssist.setVisible(false)
+                this.gameScene.attackDir.x = this.joystick2.x
+                this.gameScene.attackDir.y = this.joystick2.y
+                this.gameScene.camera.setFollowOffset(0, 0)
+            }
+        }
+
         this.handleGameEvent()
     }
 
@@ -178,6 +215,20 @@ export class GameUI extends Scene{
         }
 
         if(this.skillUI.active) this.skillUI.update()
+
+            if(isMobile() && this.joystick2){
+            if(this.skillUI && this.skillUI instanceof SkillUI && this.skillUI.isCooldown()) this.joystick2.setAlpha(1)
+            else this.joystick2.setAlpha(0.2)
+
+            if(this.joystick2.x != 0 || this.joystick2.y != 0){
+                const x = this.joystick2.x
+                const y = this.joystick2.y
+
+                const rad = Math.atan2(y, x)
+                this.gameScene.player.aimAssist.setRotation(rad)
+                this.gameScene.camera.setFollowOffset(-x*50, -y*50)
+            }
+        }
     }
 
     handleGameEvent(){
@@ -193,6 +244,7 @@ export class GameUI extends Scene{
             this.scene.setVisible(false)
             this.booksUI.destroy(true)
             this.chat.destroy()
+            this.sound.stopAll()
         })
     }
 

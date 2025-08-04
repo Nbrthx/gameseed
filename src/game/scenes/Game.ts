@@ -47,6 +47,10 @@ export class Game extends Scene
         this.world = new p.World
         this.worldId = 'map1'
 
+        const st = this.sound.add('soundtrack')
+        st.setVolume(0.05).setLoop(true)
+        st.play()
+
         this.debugGraphics = this.add.graphics().setDepth(1000)
         this.mapSetup = new MapSetup(this, 'map1')
 
@@ -135,6 +139,11 @@ export class Game extends Scene
         }
         if(this.UI.keyboardInput.right){
             vel.x = 1;
+        }
+
+        if(vel.length() == 0 && this.UI.joystick){
+            vel.x = this.UI.joystick.x;
+            vel.y = this.UI.joystick.y;
         }
         
         vel.normalize();
